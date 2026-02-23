@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Incident in the Hall — Equity Scenario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --teal: #1a5f6e;
+      --teal-mid: #2a8599;
+      --teal-dark: #0f3840;
+      --teal-light: #e8f4f7;
+      --teal-pale: #c8e6ed;
+      --gold: #c17f24;
+      --gold-light: #f5e6cc;
+      --gold-pale: #fdf6ec;
+      --dark: #1e1e1e;
+      --mid: #4a4a4a;
+      --muted: #7a7a7a;
+      --off-white: #f7f5f2;
+      --white: #ffffff;
+      --rule: #d8d4ce;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--off-white);
+      color: var(--dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+
+    #header {
+      grid-column: 1/-1;
+      background: var(--teal);
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--gold);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    #header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    #header .school {
+      font-size: .72rem;
+      color: var(--teal-pale);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    #header .hdivider {
+      width: 1px;
+      height: 18px;
+      background: rgba(255, 255, 255, .25);
+    }
+
+    #header .htitle {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    #restart-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, .35);
+      color: var(--teal-pale);
+      font-family: 'Source Serif 4', serif;
+      font-size: .75rem;
+      padding: .35rem .9rem;
+      border-radius: 2px;
+      cursor: pointer;
+      letter-spacing: .05em;
+      transition: all .2s;
+    }
+
+    #restart-btn:hover {
+      background: rgba(255, 255, 255, .1);
+      color: var(--white);
+      border-color: rgba(255, 255, 255, .6);
+    }
+
+    #progress-bar {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(26, 95, 110, .15);
+      z-index: 99;
+    }
+
+    #progress-fill {
+      height: 100%;
+      background: var(--gold);
+      transition: width .5s ease;
+      width: 0%;
+    }
+
+    #sidebar {
+      background: var(--teal-dark);
+      padding: 1.5rem 1.25rem;
+      border-right: 1px solid rgba(255, 255, 255, .08);
+      overflow-y: auto;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+    }
+
+    #sidebar h3 {
+      font-size: .65rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    .path-item {
+      display: flex;
+      gap: .6rem;
+      align-items: flex-start;
+      margin-bottom: .5rem;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity .35s, transform .35s;
+    }
+
+    .path-item.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .path-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .path-text {
+      font-size: .7rem;
+      color: rgba(200, 230, 237, .7);
+      line-height: 1.45;
+    }
+
+    .path-connector {
+      width: 1px;
+      height: 10px;
+      background: rgba(193, 127, 36, .3);
+      margin-left: 3px;
+    }
+
+    #sidebar-thinkers {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .thinker-tag {
+      font-size: .68rem;
+      color: rgba(200, 230, 237, .6);
+      line-height: 1.5;
+      margin-bottom: .3rem;
+    }
+
+    .thinker-tag strong {
+      color: var(--teal-pale);
+      font-weight: 600;
+    }
+
+    #main {
+      padding: 3rem 4rem;
+      max-width: 860px;
+      overflow-y: auto;
+    }
+
+    .screen {
+      animation: fadeUp .45s ease both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-rule {
+      width: 48px;
+      height: 3px;
+      background: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .screen-label,
+    .decision-step,
+    .convergence-label,
+    .final-label {
+      font-size: .65rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-family: 'Source Serif 4', serif;
+      margin-bottom: .6rem;
+    }
+
+    .screen-label {
+      color: var(--gold);
+    }
+
+    .decision-step {
+      color: var(--muted);
+    }
+
+    .complication-label {
+      font-size: .65rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      display: inline-block;
+      background: var(--teal);
+      color: var(--white);
+      padding: .28rem .65rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .convergence-label {
+      color: var(--teal-mid);
+    }
+
+    .final-label {
+      color: var(--gold);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: var(--teal);
+      line-height: 1.15;
+      margin-bottom: 2rem;
+      font-weight: 900;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem;
+      color: var(--teal);
+      line-height: 1.2;
+      margin-bottom: .75rem;
+      font-weight: 700;
+    }
+
+    .body-text {
+      font-size: 1.08rem;
+      line-height: 1.82;
+      color: var(--mid);
+      max-width: 660px;
+      margin-bottom: 2.5rem;
+    }
+
+    .body-text p {
+      margin-bottom: 1rem;
+    }
+
+    .body-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .context {
+      font-size: 1rem;
+      color: var(--mid);
+      line-height: 1.75;
+      margin-bottom: 2rem;
+      max-width: 640px;
+      font-style: italic;
+      padding-left: 1rem;
+      border-left: 3px solid var(--teal-pale);
+    }
+
+    .context p {
+      margin-bottom: .7rem;
+    }
+
+    .context p:last-child {
+      margin-bottom: 0;
+    }
+
+    .speech {
+      font-style: italic;
+      color: var(--teal-mid);
+    }
+
+    .convergence-box {
+      background: var(--teal-light);
+      border: 1px solid var(--teal-pale);
+      padding: 2.2rem 2.5rem;
+      border-radius: 2px;
+    }
+
+    .convergence-box .body-text {
+      max-width: none;
+    }
+
+    .final-box {
+      background: var(--teal-dark);
+      border-radius: 3px;
+      padding: 3rem;
+      color: var(--white);
+      margin-bottom: 2rem;
+    }
+
+    .final-box .body-text {
+      color: rgba(232, 244, 247, .88);
+      max-width: 600px;
+    }
+
+    .final-question {
+      border-top: 1px solid rgba(193, 127, 36, .4);
+      padding-top: 2rem;
+      margin-top: 2rem;
+    }
+
+    .final-question h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: .75rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      font-weight: 400;
+    }
+
+    .final-question p {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.38rem;
+      line-height: 1.55;
+      color: var(--white);
+      font-style: italic;
+    }
+
+    .facilitator-box {
+      background: var(--white);
+      border: 1px solid var(--rule);
+      padding: 1.5rem 1.75rem;
+      margin-top: 2rem;
+      border-radius: 2px;
+    }
+
+    .facilitator-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--teal);
+      margin-bottom: .9rem;
+      font-weight: 700;
+    }
+
+    .facilitator-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .55rem;
+    }
+
+    .facilitator-box li {
+      font-size: .88rem;
+      color: var(--mid);
+      line-height: 1.55;
+      padding-left: 1.1rem;
+      position: relative;
+    }
+
+    .facilitator-box li::before {
+      content: '·';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .pause-prompt {
+      background: var(--gold-pale);
+      border: 1px solid var(--gold-light);
+      border-left: 4px solid var(--gold);
+      padding: 1rem 1.35rem;
+      margin-bottom: 2rem;
+      border-radius: 1px;
+    }
+
+    .pause-label {
+      font-size: .62rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: .4rem;
+    }
+
+    .pause-prompt p {
+      font-size: .93rem;
+      color: var(--mid);
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    .question-label {
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .75rem;
+      font-family: 'Source Serif 4', serif;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: .7rem;
+      margin-top: .25rem;
+    }
+
+    .choice-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-left: 3px solid transparent;
+      padding: 1.05rem 1.2rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all .2s ease;
+      font-family: 'Source Serif 4', serif;
+      font-size: .96rem;
+      color: var(--dark);
+      line-height: 1.6;
+      border-radius: 1px;
+      width: 100%;
+    }
+
+    .choice-btn:hover {
+      border-left-color: var(--teal);
+      background: var(--teal-light);
+      transform: translateX(3px);
+      box-shadow: 0 2px 12px rgba(26, 95, 110, .1);
+    }
+
+    .choice-btn:active {
+      transform: translateX(1px);
+    }
+
+    .choice-letter {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--teal-light);
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      font-weight: 700;
+      margin-top: 1px;
+      transition: background .2s, color .2s;
+    }
+
+    .choice-btn:hover .choice-letter {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .continue-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      padding: .85rem 1.8rem;
+      font-family: 'Source Serif 4', serif;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: all .2s;
+      border-radius: 1px;
+      margin-top: 1.5rem;
+    }
+
+    .continue-btn:hover {
+      background: var(--teal-mid);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(26, 95, 110, .25);
+    }
+
+    .continue-btn.gold {
+      background: var(--gold);
+      margin-top: 2rem;
+    }
+
+    .continue-btn.gold:hover {
+      background: #a86d1e;
+      box-shadow: 0 4px 16px rgba(193, 127, 36, .3);
+    }
+
+    .btn-arrow {
+      transition: transform .2s;
+    }
+
+    .continue-btn:hover .btn-arrow {
+      transform: translateX(3px);
+    }
+
+    @media(max-width:800px) {
+      #app {
+        grid-template-columns: 1fr;
+      }
+
+      #sidebar {
+        display: none;
+      }
+
+      #main {
+        padding: 2rem 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.9rem;
+      }
+
+      .final-box {
+        padding: 2rem;
+      }
+    }
+
+    .ministry-ref {
+      font-size: .83rem;
+      background: var(--teal-light);
+      border-left: 3px solid var(--teal);
+      padding: .75rem 1rem;
+      margin-bottom: 1.5rem;
+      color: var(--mid);
+      line-height: 1.65;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .ministry-ref strong {
+      color: var(--teal);
+      font-weight: 600;
+    }
+
+    .framework-step {
+      font-size: .68rem;
+      color: rgba(200, 230, 237, .65);
+      line-height: 1.5;
+      margin-bottom: .4rem;
+      padding-left: .7rem;
+      border-left: 2px solid rgba(193, 127, 36, .4);
+    }
+
+    .framework-step strong {
+      color: var(--teal-pale);
+      font-weight: 600;
+      display: block;
+      margin-bottom: .1rem;
+    }
+
+    #sidebar {
+      grid-template-rows: unset;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <header id="header">
+      <div id="header-left">
+        <span class="school">Grandview Heights Secondary &nbsp;&middot;&nbsp; Surrey, BC</span>
+        <div class="hdivider"></div>
+        <span class="htitle">The Incident in the Hall</span>
+      </div>
+      <button id="restart-btn">&#x21BA; &nbsp;Start Over</button>
+    </header>
+    <div id="progress-bar">
+      <div id="progress-fill"></div>
+    </div>
+    <aside id="sidebar">
+      <h3>Your Path</h3>
+      <div id="path-tracker"></div>
+      <div style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);">
+        <h3>Ministry Framework</h3>
+        <div class="framework-step"><strong>1. Stop the incident</strong>Call in or call out immediately.</div>
+        <div class="framework-step"><strong>2. Centre the harmed</strong>Safer space. Agency. Trusted adult.</div>
+        <div class="framework-step"><strong>3. Seek &amp; document</strong>Share once. Document well.</div>
+        <div class="framework-step"><strong>4. Harmer accountability</strong>Code of Conduct. Parents. Support.</div>
+        <div class="framework-step"><strong>5. Restore community</strong>Restorative practices. Follow up.</div>
+        <div class="framework-step"><strong>6. Reflect &amp; resource</strong>Pattern or one-off? Replenish.</div>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);">
+        <h3>The Six Thinkers</h3>
+        <div class="thinker-tag"><strong>Rawls</strong> &mdash; Who does each choice protect?</div>
+        <div class="thinker-tag"><strong>Sen</strong> &mdash; What does she actually need?</div>
+        <div class="thinker-tag"><strong>Noddings</strong> &mdash; Will she feel cared for?</div>
+        <div class="thinker-tag"><strong>hooks</strong> &mdash; What does silence teach?</div>
+        <div class="thinker-tag"><strong>Greene</strong> &mdash; Can you imagine this differently?</div>
+        <div class="thinker-tag"><strong>Dewey</strong> &mdash; What did everyone learn today?</div>
+      </div>
+    </aside>
+    <main id="main">
+      <div id="screen-container"></div>
+    </main>
+  </div>
+  <script>
+    const NODES = {
+
+      atmosphere: {
+        type: "atmosphere",
+        label: "A Scenario for Educators — Aligned with the B.C. Ministry of Education Racism Response Guidelines 2025",
+        title: "The Incident in the Hall",
+        body: [
+          "The hallway is loud in the way secondary hallways always are at 9:25 — lockers banging, someone’s music bleeding through earphones, two grade eights running past the water fountain. You’re carrying your coffee and half your attention is already in your classroom.",
+          "Near the lockers, a loose cluster of four students are watching something on a phone, laughing. An Indigenous student you know slightly — grade ten, engaged in class, tends to sit near the front — is making her way through the same corridor.",
+          "As she passes the group, one of the boys says something. You catch it clearly. It’s a derogatory comment about her identity, delivered in the casual tone of someone who isn’t really thinking about it. Two of the others laugh. A third goes quiet and looks at the floor.",
+          "She keeps walking. Her expression doesn’t change. She doesn’t look back.",
+          "The bell rings. Thirty students are about to walk through your door.",
+          "The B.C. Ministry of Education’s Racism Response Guidelines are clear: all educators have a collective responsibility to disrupt and respond to racist incidents. What you do in the next few minutes matters — not just for her, but for everyone who witnessed it."
+        ],
+        next: "decision_1",
+        progress: 5
+      },
+
+      decision_1: {
+        type: "decision",
+        step: "Step 1 of 6 — Stop the Incident",
+        title: "The Immediate Moment",
+        ministryRef: "The Ministry framework requires all educators to immediately name the behaviour and intervene. Two options: “call in” (address privately and supportively) or “call out” (address publicly when safety requires it). Both require naming what happened. Remaining silent is not aligned with the framework.",
+        question: "What do you do right now?",
+        pausePrompt: "Before you click — the Ministry states that all educators must acknowledge that what was said or done is inappropriate, and remind everyone it goes against the Code of Conduct. Talk about this for two minutes: what does each option risk, and for whom?",
+        choices: [
+          {
+            letter: "A",
+            text: "You call in — step toward the students, lower your voice, and say directly: “I heard that. That comment is not acceptable, and it goes against our Code of Conduct. We will be talking about this.” Then you walk in.",
+            next: "decision_2"
+          },
+          {
+            letter: "B",
+            text: "You call out — the hallway is still busy and others heard it too. You address it clearly and audibly: “That kind of comment is not okay in this school — not ever.” You make eye contact with the student who spoke, then walk in.",
+            next: "decision_2"
+          },
+          {
+            letter: "C",
+            text: "You say nothing. You tell yourself you will deal with it properly after class, when you’ve had time to think and the audience is gone.",
+            next: "consequence_silence"
+          }
+        ],
+        progress: 16
+      },
+
+      consequence_silence: {
+        type: "complication",
+        label: "What the Ministry says about silence",
+        body: [
+          "You walk in. Class happens. Thirty students — including the one who went quiet — saw you hear it and say nothing.",
+          "The Ministry framework is explicit: all educators have a collective responsibility to disrupt and respond to racist incidents immediately. Naming the behaviour matters not only for the student who was targeted, but for everyone watching. The guidelines note that this is a micro or macroaggression — a racist incident that requires a response regardless of whether it was intentional.",
+          "The Ministry distinguishes between calling in (a quieter, private intervention) and calling out (a more public one). Both are valid responses to different situations. What is not aligned with the framework is letting the moment pass without naming the behaviour at all.",
+          "You can still act. But the window for an immediate, visible response has closed. What you do next carries that weight."
+        ],
+        question: "Class is underway. What are you thinking?",
+        choices: [
+          {
+            letter: "A",
+            text: "You’re planning a private conversation with the students involved after class. Delayed, but still direct.",
+            next: "decision_2_late"
+          },
+          {
+            letter: "B",
+            text: "You’re thinking about her first. You want to check in before you do anything else.",
+            next: "decision_2_late"
+          },
+          {
+            letter: "C",
+            text: "You’re second-guessing yourself. In hindsight the comment doesn’t feel quite as clear as it did in the moment. Maybe you misread it.",
+            next: "consequence_rationalize"
+          }
+        ],
+        progress: 24
+      },
+
+      consequence_rationalize: {
+        type: "complication",
+        label: "Two days later",
+        body: [
+          "You didn’t follow up. The morning moved on the way mornings do.",
+          "Two days later, a colleague mentions casually that they’ve noticed a particular group of students can be pretty rough on some of the quieter kids. They are not referencing anything specific. They have no idea what you saw.",
+          "You are the only adult who witnessed it clearly. The Ministry’s framework asks educators to reflect: was this a one-off incident, or an extension of the broader school culture? That question cannot be answered if the incident was never named.",
+          "You still have choices. They are harder now, but they exist."
+        ],
+        question: "What do you do?",
+        choices: [
+          {
+            letter: "A",
+            text: "You tell your colleague what you saw and begin the process from here. You are two days late, and you are not going to let it become three.",
+            next: "decision_2_late"
+          },
+          {
+            letter: "B",
+            text: "You find her and check in — genuinely, without explanation. Just attention, offered without agenda.",
+            next: "decision_2_late"
+          },
+          {
+            letter: "C",
+            text: "You do nothing further. The moment has receded. Acting now feels disproportionate.",
+            next: "convergence"
+          }
+        ],
+        progress: 28
+      },
+
+      decision_2: {
+        type: "decision",
+        step: "Step 2 of 6 — Centre the Harmed Person",
+        title: "After the bell. Where does your attention go first?",
+        ministryRef: "The Ministry framework is unambiguous about sequence: centre the harmed person before addressing the harmer. Connect with her, provide a safer and supportive space, identify her immediate needs, and allow for agency by letting her communicate in a way that is comfortable for her. Check in with a trusted adult: counsellor, Cultural Advisor, coach.",
+        context: "The lesson is underway. Students are working. According to the Ministry’s framework, your first obligation after stopping the incident is to the student who was targeted — not to the harmer, not to documentation, not to the lesson plan.",
+        question: "What do you prioritize?",
+        pausePrompt: "Before you click — the Ministry is explicit that the harmed person is centred first. What does each option communicate to her about whose experience matters most in this process?",
+        choices: [
+          {
+            letter: "A",
+            text: "You find her as soon as possible — end of period, or by asking a trusted staff member to check in now. You want to ensure she has access to a safer space and a trusted adult before anything else happens.",
+            next: "decision_3_agency"
+          },
+          {
+            letter: "B",
+            text: "You go to your counsellor or department head first to get guidance on how to approach her. You want to handle this correctly.",
+            next: "decision_3_seq"
+          },
+          {
+            letter: "C",
+            text: "You speak to the students who made the comment first, while it’s fresh and before they’ve had time to talk to each other.",
+            next: "consequence_harmer_first"
+          }
+        ],
+        progress: 32
+      },
+
+      decision_2_late: {
+        type: "decision",
+        step: "Step 2 of 6 — Centre the Harmed Person (Late Start)",
+        title: "The framework still applies. It starts with her.",
+        ministryRef: "Even when the immediate window has passed, the Ministry’s guidance holds: the harmed person must be centred first. Provide a safer space. Connect with a trusted adult. Allow for agency in how she communicates.",
+        context: "Whether it has been an hour or two days, the Ministry’s framework begins the same way — with the person who was targeted.",
+        question: "How do you approach her?",
+        choices: [
+          {
+            letter: "A",
+            text: "You find her and sit nearby without leading with the incident. You ask how she’s doing and give her space to direct what happens next.",
+            next: "decision_3_agency"
+          },
+          {
+            letter: "B",
+            text: "You ask the school counsellor to check in with her. You want her to have access to a skilled support person, not just you.",
+            next: "decision_3_seq"
+          },
+          {
+            letter: "C",
+            text: "You tell her directly what you saw, that it was not okay, and that you are going to follow up on it. You want her to know she was not invisible.",
+            next: "decision_3_agency"
+          }
+        ],
+        progress: 32
+      },
+
+      consequence_harmer_first: {
+        type: "complication",
+        label: "On sequencing — what the Ministry says",
+        isContinue: true,
+        next: "decision_2",
+        body: [
+          "Addressing the harmer first is a natural impulse, especially when you want accountability to happen quickly. But the Ministry’s Racism Response Guidelines are explicit about the sequence: the harmed person is centred first.",
+          "The framework asks: how can the voice and experience of the harmed person be centred? That question has to come before the question of what happens to the harmer. If she finds out later that you spoke to the students who targeted her before you spoke to her, the message — however unintentionally — is that managing the situation took priority over her experience of it.",
+          "The students are not going anywhere. Redirect and start with her."
+        ],
+        progress: 32
+      },
+
+      decision_3_agency: {
+        type: "complication",
+        label: "She’s in front of you",
+        step: "Step 2 continued — Allowing for Agency",
+        body: [
+          "You found her, or she was found. You tell her you saw what happened in the hallway. She nods, very slightly.",
+          "The Ministry framework is specific here: allow for agency by letting the harmed person communicate in a way that is comfortable for them. Your role is to hold space, not to extract what you need for the process.",
+          "She says: “I’m fine.”"
+        ],
+        question: "How do you respond?",
+        choices: [
+          {
+            letter: "A",
+            text: "You hold space without pressing. You tell her you believe her, that you’re glad she’s okay, and that you want her to know you saw it and will follow up — not because she needs to do anything, but because that is your responsibility.",
+            next: "decision_4_doc"
+          },
+          {
+            letter: "B",
+            text: "You ask if there is a trusted adult she would like you to connect her with — a counsellor, a Cultural Advisor, a coach. The Ministry specifically names these as supports. You want her to have access to someone beyond you.",
+            next: "decision_4_doc"
+          },
+          {
+            letter: "C",
+            text: "You press gently. You tell her she doesn’t have to be fine about it, and that this kind of thing has a way of landing harder than it seems in the moment.",
+            next: "consequence_pressing"
+          }
+        ],
+        progress: 48
+      },
+
+      consequence_pressing: {
+        type: "complication",
+        label: "What the Ministry says about agency",
+        isContinue: true,
+        next: "decision_4_doc",
+        body: [
+          "She looks at you for a moment and says: “I know. I’ve been fine before.”",
+          "There is nothing hostile in it. It is information about how often she has been here.",
+          "The Ministry’s framework is specific: the harmed person should be allowed to communicate in a way that is comfortable for them. Pressing — even gently, even with care — can shift the dynamic from support to another form of demand on her.",
+          "Her “I’m fine” may mean she does not want to process this with you right now. That is her right. Your role is to ensure she knows support exists and that you are following through on your responsibilities — not to require her to perform distress before you act."
+        ],
+        progress: 48
+      },
+
+      decision_3_seq: {
+        type: "decision",
+        step: "Step 3 of 6 — Seek, Find, and Document",
+        title: "You went to a colleague first. Documentation comes next.",
+        ministryRef: "The Ministry framework: share once and document well. The harmed student should not have to repeat their trauma. Prioritize accurate note-taking. Preserve privacy — ask parties not to discuss the investigation except with designated personnel.",
+        context: "Your counsellor or department head has been briefed. The framework now requires careful documentation — what you observed, when, and what you said. This protects the student, anchors the process, and prevents the incident from existing only in memory.",
+        question: "How do you approach documentation?",
+        choices: [
+          {
+            letter: "A",
+            text: "You write down exactly what you witnessed — date, time, location, what was said, who was present, what you did — before speaking to any student, so the record is not shaped by subsequent conversations.",
+            next: "decision_4_doc"
+          },
+          {
+            letter: "B",
+            text: "You speak with her first, then document — ensuring the record includes her perspective alongside your own observation.",
+            next: "decision_4_doc"
+          },
+          {
+            letter: "C",
+            text: "You plan to document after speaking with everyone involved, so you have the most complete picture.",
+            next: "consequence_late_doc"
+          }
+        ],
+        progress: 48
+      },
+
+      consequence_late_doc: {
+        type: "complication",
+        label: "On documentation timing",
+        isContinue: true,
+        next: "decision_4_doc",
+        body: [
+          "The Ministry’s guideline to share once and document well is specifically designed to prevent a harmed student from having to repeat their experience to multiple people. It is also designed to prevent the record from being shaped by conversations that happen after the fact.",
+          "Waiting until all parties have been interviewed means your notes may reflect those conversations rather than what you independently witnessed. Early documentation of what you personally observed is the anchor that keeps the process honest.",
+          "There is still time to document well. Do it before the next conversation."
+        ],
+        progress: 48
+      },
+
+      decision_4_doc: {
+        type: "decision",
+        step: "Step 4 of 6 — Ensure Accountability",
+        title: "Now: the students who made the comment.",
+        ministryRef: "The Ministry framework: inform the student that the behaviour goes against the Code of Conduct. Contact parent or caregiver. Consider what support the student who caused harm needs — the harmer may have been harmed themselves. Accountability must include consequences but also education to promote reflection and growth.",
+        context: "The harmed student has been centred. Documentation is underway. The framework now turns to the student who made the comment. The goal is not only consequence — it is accountability, education, and consideration of the harmer’s own context.",
+        question: "How do you structure this conversation?",
+        pausePrompt: "Before you click — the Ministry asks educators to consider whether there is a history of mental health challenges, an IEP, or living circumstances that may have contributed to the behaviour. Accountability is not the same as punishment, and support for the harmer is part of the framework.",
+        choices: [
+          {
+            letter: "A",
+            text: "You meet with him privately. You name what he said, explain that it violates the Code of Conduct, share the impact on the student who was targeted, and ask what he thinks accountability looks like. You then contact his parents or caregivers.",
+            next: "decision_5"
+          },
+          {
+            letter: "B",
+            text: "Before meeting with him, you check whether there is anything in his file — an IEP, known circumstances, previous incidents — that provides context. Then you meet, name the behaviour clearly, and contact his parents or caregivers.",
+            next: "decision_5"
+          },
+          {
+            letter: "C",
+            text: "You focus the conversation on consequences per the Code of Conduct and refer the deeper educational conversation to administration. You contact his parents or caregivers.",
+            next: "decision_5"
+          }
+        ],
+        progress: 64
+      },
+
+      decision_5: {
+        type: "decision",
+        step: "Step 5 of 6 — Restore Community",
+        title: "The days that follow. What does restoration look like?",
+        ministryRef: "The Ministry framework: follow up with the harmed student at defined intervals — next day, one week, one month. Identify invisible harm to witnesses. Consider restorative practices only when the harmed person is willing. Restoring justice does not mean the absence of consequences.",
+        context: "The immediate steps have been taken. The incident is documented. Accountability is in motion. The Ministry’s framework now asks how community is restored — and it is explicit that this includes everyone who witnessed the incident, not only the two students directly involved.",
+        question: "What do you prioritize?",
+        choices: [
+          {
+            letter: "A",
+            text: "You check in with her the next day. Not about the incident — just genuine attention. You do the same one week later, and one month later. The Ministry’s framework prescribes these specific intervals.",
+            next: "decision_6"
+          },
+          {
+            letter: "B",
+            text: "You check in with the student who went quiet. The Ministry explicitly names invisible harm to witnesses as something educators must identify and respond to. She saw it. What did it cost her?",
+            next: "decision_6"
+          },
+          {
+            letter: "C",
+            text: "With her consent, you explore whether a restorative process — led by a skilled practitioner, not by you alone — might be appropriate. You make it an invitation. You do not push.",
+            next: "decision_6"
+          }
+        ],
+        progress: 78
+      },
+
+      decision_6: {
+        type: "decision",
+        step: "Step 6 of 6 — Reflect and Resource",
+        title: "Two weeks later. The Ministry asks you to reflect.",
+        ministryRef: "The Ministry’s final step: reflect on the event (one-off or school culture?), reflect on the response (timely, considerate, healing-oriented?), resource yourself (what do you need to replenish capacity?), and determine whether actions were reactive or responsive.",
+        context: "The same group of students is in the hallway. Same energy. Nothing formal has changed at the school-wide level. You are sitting with the Ministry’s hardest question: would First Nations and racialized communities agree that they were seen, valued, and supported by how this was handled?",
+        question: "Which reflection most honestly describes where you are?",
+        choices: [
+          {
+            letter: "A",
+            text: "You have raised this with administration as a potential pattern, not just a single incident. The Ministry asks whether this is a one-off or an extension of school culture — answering that question requires it to be on someone’s radar beyond your classroom.",
+            next: "convergence"
+          },
+          {
+            letter: "B",
+            text: "You have had a broader conversation with your class about what kind of community you want the room to be — not about this incident, but connected to it. The Ministry frames incident response as part of long-term anti-racist education, not just crisis management.",
+            next: "convergence"
+          },
+          {
+            letter: "C",
+            text: "You have been honest with yourself about what you could have done differently, and you have identified what you need to keep doing this work well. The Ministry explicitly asks educators to resource themselves after responding to incidents of harm.",
+            next: "convergence"
+          }
+        ],
+        progress: 90
+      },
+
+      convergence: {
+        type: "convergence",
+        label: "All paths arrive here",
+        title: "The last day before spring break.",
+        question: "Looking back across the six steps, which statement most honestly describes your path?",
+        body: [
+          "The Indigenous student passes you in the hallway. She is walking with someone you have not seen her with before. She is mid-conversation. She does not notice you.",
+          "She looks fine. She might actually be fine. Or she has learned, over years of this, to look fine in hallways.",
+          "The Ministry’s Racism Response Guidelines ask educators to reflect on whether First Nations and racialized communities would agree that they were seen, valued, and supported by the response and how it was carried out. That may require direct consultation with the local First Nation.",
+          "That is the question underneath all six steps."
+        ],
+        choices: [
+          {
+            letter: "1",
+            text: "I stopped the incident immediately and named the behaviour. That was the foundation everything else depended on.",
+            next: "final"
+          },
+          {
+            letter: "2",
+            text: "I centred her first — before documentation, before the harmer, before administration. The sequence mattered.",
+            next: "final"
+          },
+          {
+            letter: "3",
+            text: "I followed the full framework: stopped, centred, documented, accountability, restoration, reflection. Not perfectly, but with intention.",
+            next: "final"
+          },
+          {
+            letter: "4",
+            text: "I struggled with the framework. I did some steps well and not others. The honest reflection is uncomfortable.",
+            next: "final"
+          }
+        ],
+        progress: 96
+      },
+
+      final: {
+        type: "final",
+        label: "End of Scenario",
+        body: [
+          "The B.C. Ministry of Education’s Racism Response Guidelines were developed in consultation with educators from over 40 school districts, informed by the voices of racialized communities and students. They exist because incidents like this one happen in hallways across the province every day.",
+          "The framework is not a checklist. It is an orientation — toward the harmed person first, toward accountability that includes both consequences and education, toward restoration that is led by the person who was targeted, and toward honest reflection on whether the response would be recognized by that student and her community as having genuinely seen, valued, and supported her.",
+          "The Ministry’s final question is the hardest one: would First Nations and racialized communities agree that they were seen, valued, and supported by the response and how it was carried out? That question may require going beyond this building to find out."
+        ],
+        question: "You were the only adult who saw what happened that morning. What did you do with that — and would she recognize your response as having been for her?",
+        thinkers: [
+          { name: "Rawls", q: "The Ministry asks who each choice protects. Rawls would ask the same: whose interests were actually served by the sequence of your decisions?" },
+          { name: "Sen", q: "The framework centres the harmed person’s actual needs, not just what was provided. Sen would ask: what was she genuinely able to do with the support she received?" },
+          { name: "Noddings", q: "The framework says care only counts when it’s received. Did she experience your response as care, or as institutional process?" },
+          { name: "hooks", q: "The Ministry states that all educators have a collective responsibility to disrupt. hooks would say that failing to name the behaviour is itself a pedagogical act. What did your choice teach?" },
+          { name: "Greene", q: "The framework asks whether communities would agree they were seen and valued. Greene would ask: can you imagine a school where that question does not need to be asked?" },
+          { name: "Dewey", q: "The Ministry asks whether the incident was a one-off or an extension of school culture. Dewey would ask what the students in that hallway actually learned today — and who intended to teach it." }
+        ],
+        progress: 100
+      }
+    };
+
+    let pathHistory = [];
+
+    function render(nodeId) {
+      const node = NODES[nodeId];
+      if (!node) { console.error("Missing node:", nodeId); return; }
+      updateProgress(node.progress || 0);
+      const container = document.getElementById("screen-container");
+      container.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.className = "screen";
+      wrapper.innerHTML = buildNodeHtml(node);
+      container.appendChild(wrapper);
+      wrapper.querySelectorAll("[data-choice-index]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const idx = parseInt(btn.getAttribute("data-choice-index"), 10);
+          const choice = node.choices[idx];
+          const short = choice.text.replace(/<[^>]+>/g, "").substring(0, 60) + (choice.text.length > 60 ? "..." : "");
+          addToPath("<em style=\"color:var(--gold);font-style:normal;\">" + choice.letter + "</em> — " + short);
+          render(choice.next);
+        });
+      });
+      wrapper.querySelectorAll("[data-continue-to]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const t = btn.getAttribute("data-continue-to");
+          if (t === "__restart__") { restart(); } else { render(t); }
+        });
+      });
+      document.getElementById("main").scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function miniRef(text) {
+      if (!text) return "";
+      return "<div class=\"ministry-ref\"><strong>Ministry Guidance:</strong> " + text + "</div>";
+    }
+    function bodyHtml(paragraphs) {
+      return "<div class=\"body-text\">" + paragraphs.map(p => "<p>" + p + "</p>").join("") + "</div>";
+    }
+    function choicesHtml(choices) {
+      return "<div class=\"choices\">" + choices.map((c, i) =>
+        "<button class=\"choice-btn\" data-choice-index=\"" + i + "\"><span class=\"choice-letter\">" + c.letter + "</span><span>" + c.text + "</span></button>"
+      ).join("") + "</div>";
+    }
+    function pauseHtml(text) {
+      if (!text) return "";
+      return "<div class=\"pause-prompt\"><div class=\"pause-label\">&#9646; Pause &amp; Discuss</div><p>" + text + "</p></div>";
+    }
+
+    function buildNodeHtml(node) {
+      if (node.type === "atmosphere") {
+        return "<div class=\"screen-label\">" + node.label + "</div><div class=\"section-rule\"></div><h1>" + node.title + "</h1>" +
+          bodyHtml(node.body) + "<button class=\"continue-btn\" data-continue-to=\"" + node.next + "\">Begin the scenario <span class=\"btn-arrow\">&#8594;</span></button>";
+      }
+      if (node.type === "decision") {
+        const ctx = node.context ? "<div class=\"context\"><p>" + node.context + "</p></div>" : "";
+        return "<div class=\"decision-step\">" + (node.step || "") + "</div><div class=\"section-rule\"></div><h2>" + node.title + "</h2>" +
+          miniRef(node.ministryRef) + ctx + pauseHtml(node.pausePrompt) +
+          "<p class=\"question-label\">" + (node.question || "What do you do?") + "</p>" + choicesHtml(node.choices);
+      }
+      if (node.type === "complication") {
+        const actionHtml = node.isContinue
+          ? "<button class=\"continue-btn\" data-continue-to=\"" + node.next + "\">Continue <span class=\"btn-arrow\">&#8594;</span></button>"
+          : "<p class=\"question-label\">" + (node.question || "What do you do?") + "</p>" + choicesHtml(node.choices);
+        return "<div class=\"complication-label\">" + (node.label || "") + "</div>" +
+          (node.step ? "<div class=\"decision-step\" style=\"margin-bottom:1rem;\">" + node.step + "</div>" : "") +
+          "<div class=\"section-rule\"></div>" + bodyHtml(node.body) + pauseHtml(node.pausePrompt) + actionHtml;
+      }
+      if (node.type === "convergence") {
+        return "<div class=\"convergence-box\"><div class=\"convergence-label\">" + node.label + "</div><div class=\"section-rule\"></div><h2>" + node.title + "</h2>" +
+          bodyHtml(node.body) + "<p class=\"question-label\">" + (node.question || "") + "</p>" + choicesHtml(node.choices) + "</div>";
+      }
+      if (node.type === "final") {
+        const items = node.thinkers.map(t => "<li><strong>" + t.name + ":</strong> " + t.q + "</li>").join("");
+        return "<div class=\"final-box\"><div class=\"final-label\">" + node.label + "</div>" + bodyHtml(node.body) +
+          "<div class=\"final-question\"><h3>One question. No right answer. Put your devices down and talk.</h3><p>" + node.question + "</p></div></div>" +
+          "<div class=\"facilitator-box\"><h3>Connecting to the Six Thinkers and the Ministry Framework</h3><ul>" + items + "</ul></div>" +
+          "<button class=\"continue-btn gold\" data-continue-to=\"__restart__\">&#x21BA; &nbsp;Start over with a different path</button>";
+      }
+      return "";
+    }
+
+    function addToPath(label) {
+      pathHistory.push(label);
+      const tracker = document.getElementById("path-tracker");
+      tracker.innerHTML = "";
+      pathHistory.forEach((item, i) => {
+        if (i > 0) { const conn = document.createElement("div"); conn.className = "path-connector"; tracker.appendChild(conn); }
+        const el = document.createElement("div"); el.className = "path-item";
+        el.innerHTML = "<div class=\"path-dot\"></div><div class=\"path-text\">" + item + "</div>";
+        tracker.appendChild(el);
+        requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("visible")));
+      });
+    }
+    function updateProgress(pct) { document.getElementById("progress-fill").style.width = pct + "%"; }
+    function restart() { pathHistory = []; document.getElementById("path-tracker").innerHTML = ""; render("atmosphere"); }
+
+    document.getElementById("restart-btn").addEventListener("click", restart);
+    render("atmosphere");
+  </script>
+</body>
+
+</html>
