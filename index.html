@@ -1,1180 +1,1260 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Incident in the Hall — Equity Scenario</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap"
-    rel="stylesheet">
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --teal: #1a5f6e;
-      --teal-mid: #2a8599;
-      --teal-dark: #0f3840;
-      --teal-light: #e8f4f7;
-      --teal-pale: #c8e6ed;
-      --gold: #c17f24;
-      --gold-light: #f5e6cc;
-      --gold-pale: #fdf6ec;
-      --dark: #1e1e1e;
-      --mid: #4a4a4a;
-      --muted: #7a7a7a;
-      --off-white: #f7f5f2;
-      --white: #ffffff;
-      --rule: #d8d4ce;
-    }
-
-    html {
-      font-size: 16px;
-    }
-
-    body {
-      font-family: 'Source Serif 4', Georgia, serif;
-      background: var(--off-white);
-      color: var(--dark);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    #app {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      grid-template-rows: auto 1fr;
-      min-height: 100vh;
-    }
-
-    #header {
-      grid-column: 1/-1;
-      background: var(--teal);
-      padding: 0 2rem;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 3px solid var(--gold);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    #header-left {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    #header .school {
-      font-size: .72rem;
-      color: var(--teal-pale);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    #header .hdivider {
-      width: 1px;
-      height: 18px;
-      background: rgba(255, 255, 255, .25);
-    }
-
-    #header .htitle {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--white);
-      font-weight: 700;
-    }
-
-    #header-right {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-    }
-
-    #restart-btn {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, .35);
-      color: var(--teal-pale);
-      font-family: 'Source Serif 4', serif;
-      font-size: .75rem;
-      padding: .35rem .9rem;
-      border-radius: 2px;
-      cursor: pointer;
-      letter-spacing: .05em;
-      transition: all .2s;
-    }
-
-    #restart-btn:hover {
-      background: rgba(255, 255, 255, .1);
-      color: var(--white);
-      border-color: rgba(255, 255, 255, .6);
-    }
-
-    #ministry-link {
-      font-family: 'Source Serif 4', serif;
-      font-size: .75rem;
-      color: var(--gold-light);
-      letter-spacing: .04em;
-      text-decoration: none;
-      padding: .35rem .9rem;
-      border: 1px solid rgba(193, 127, 36, .5);
-      border-radius: 2px;
-      transition: all .2s;
-      white-space: nowrap;
-    }
-
-    #ministry-link:hover {
-      background: rgba(193, 127, 36, .15);
-      color: var(--white);
-      border-color: var(--gold);
-    }
-
-    #progress-bar {
-      position: fixed;
-      top: 56px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: rgba(26, 95, 110, .15);
-      z-index: 99;
-    }
-
-    #progress-fill {
-      height: 100%;
-      background: var(--gold);
-      transition: width .5s ease;
-      width: 0%;
-    }
-
-    #sidebar {
-      background: var(--teal-dark);
-      padding: 1.5rem 1.25rem;
-      border-right: 1px solid rgba(255, 255, 255, .08);
-      overflow-y: auto;
-      position: sticky;
-      top: 56px;
-      height: calc(100vh - 56px);
-    }
-
-    #sidebar h3 {
-      font-size: .65rem;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1rem;
-      padding-bottom: .5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, .1);
-    }
-
-    .path-item {
-      display: flex;
-      gap: .6rem;
-      align-items: flex-start;
-      margin-bottom: .5rem;
-      opacity: 0;
-      transform: translateX(-8px);
-      transition: opacity .35s, transform .35s;
-    }
-
-    .path-item.visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .path-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--gold);
-      margin-top: 5px;
-      flex-shrink: 0;
-    }
-
-    .path-text {
-      font-size: .7rem;
-      color: rgba(200, 230, 237, .7);
-      line-height: 1.45;
-    }
-
-    .path-connector {
-      width: 1px;
-      height: 10px;
-      background: rgba(193, 127, 36, .3);
-      margin-left: 3px;
-    }
-
-    #sidebar-thinkers {
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, .08);
-    }
-
-    .thinker-tag {
-      font-size: .68rem;
-      color: rgba(200, 230, 237, .6);
-      line-height: 1.5;
-      margin-bottom: .3rem;
-    }
-
-    .thinker-tag strong {
-      color: var(--teal-pale);
-      font-weight: 600;
-    }
-
-    #main {
-      padding: 3rem 4rem;
-      max-width: 860px;
-      overflow-y: auto;
-    }
-
-    .screen {
-      animation: fadeUp .45s ease both;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(16px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .section-rule {
-      width: 48px;
-      height: 3px;
-      background: var(--gold);
-      margin-bottom: 1.5rem;
-    }
-
-    .screen-label,
-    .decision-step,
-    .convergence-label,
-    .final-label {
-      font-size: .65rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-family: 'Source Serif 4', serif;
-      margin-bottom: .6rem;
-    }
-
-    .screen-label {
-      color: var(--gold);
-    }
-
-    .decision-step {
-      color: var(--muted);
-    }
-
-    .complication-label {
-      font-size: .65rem;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      display: inline-block;
-      background: var(--teal);
-      color: var(--white);
-      padding: .28rem .65rem;
-      margin-bottom: 1.1rem;
-    }
-
-    .convergence-label {
-      color: var(--teal-mid);
-    }
-
-    .final-label {
-      color: var(--gold);
-    }
-
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      color: var(--teal);
-      line-height: 1.15;
-      margin-bottom: 2rem;
-      font-weight: 900;
-    }
-
-    h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.85rem;
-      color: var(--teal);
-      line-height: 1.2;
-      margin-bottom: .75rem;
-      font-weight: 700;
-    }
-
-    .body-text {
-      font-size: 1.08rem;
-      line-height: 1.82;
-      color: var(--mid);
-      max-width: 660px;
-      margin-bottom: 2.5rem;
-    }
-
-    .body-text p {
-      margin-bottom: 1rem;
-    }
-
-    .body-text p:last-child {
-      margin-bottom: 0;
-    }
-
-    .context {
-      font-size: 1rem;
-      color: var(--mid);
-      line-height: 1.75;
-      margin-bottom: 2rem;
-      max-width: 640px;
-      font-style: italic;
-      padding-left: 1rem;
-      border-left: 3px solid var(--teal-pale);
-    }
-
-    .context p {
-      margin-bottom: .7rem;
-    }
-
-    .context p:last-child {
-      margin-bottom: 0;
-    }
-
-    .speech {
-      font-style: italic;
-      color: var(--teal-mid);
-    }
-
-    .convergence-box {
-      background: var(--teal-light);
-      border: 1px solid var(--teal-pale);
-      padding: 2.2rem 2.5rem;
-      border-radius: 2px;
-    }
-
-    .convergence-box .body-text {
-      max-width: none;
-    }
-
-    .final-box {
-      background: var(--teal-dark);
-      border-radius: 3px;
-      padding: 3rem;
-      color: var(--white);
-      margin-bottom: 2rem;
-    }
-
-    .final-box .body-text {
-      color: rgba(232, 244, 247, .88);
-      max-width: 600px;
-    }
-
-    .final-question {
-      border-top: 1px solid rgba(193, 127, 36, .4);
-      padding-top: 2rem;
-      margin-top: 2rem;
-    }
-
-    .final-question h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: .75rem;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1rem;
-      font-weight: 400;
-    }
-
-    .final-question p {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.38rem;
-      line-height: 1.55;
-      color: var(--white);
-      font-style: italic;
-    }
-
-    .facilitator-box {
-      background: var(--white);
-      border: 1px solid var(--rule);
-      padding: 1.5rem 1.75rem;
-      margin-top: 2rem;
-      border-radius: 2px;
-    }
-
-    .facilitator-box h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--teal);
-      margin-bottom: .9rem;
-      font-weight: 700;
-    }
-
-    .facilitator-box ul {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: .55rem;
-    }
-
-    .facilitator-box li {
-      font-size: .88rem;
-      color: var(--mid);
-      line-height: 1.55;
-      padding-left: 1.1rem;
-      position: relative;
-    }
-
-    .facilitator-box li::before {
-      content: '·';
-      position: absolute;
-      left: 0;
-      color: var(--gold);
-      font-weight: 700;
-    }
-
-    .pause-prompt {
-      background: var(--gold-pale);
-      border: 1px solid var(--gold-light);
-      border-left: 4px solid var(--gold);
-      padding: 1rem 1.35rem;
-      margin-bottom: 2rem;
-      border-radius: 1px;
-    }
-
-    .pause-label {
-      font-size: .62rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 600;
-      margin-bottom: .4rem;
-    }
-
-    .pause-prompt p {
-      font-size: .93rem;
-      color: var(--mid);
-      line-height: 1.6;
-      font-style: italic;
-    }
-
-    .question-label {
-      font-size: .75rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: .75rem;
-      font-family: 'Source Serif 4', serif;
-    }
-
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: .7rem;
-      margin-top: .25rem;
-    }
-
-    .choice-btn {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      background: var(--white);
-      border: 1px solid var(--rule);
-      border-left: 3px solid transparent;
-      padding: 1.05rem 1.2rem;
-      cursor: pointer;
-      text-align: left;
-      transition: all .2s ease;
-      font-family: 'Source Serif 4', serif;
-      font-size: .96rem;
-      color: var(--dark);
-      line-height: 1.6;
-      border-radius: 1px;
-      width: 100%;
-    }
-
-    .choice-btn:hover {
-      border-left-color: var(--teal);
-      background: var(--teal-light);
-      transform: translateX(3px);
-      box-shadow: 0 2px 12px rgba(26, 95, 110, .1);
-    }
-
-    .choice-btn:active {
-      transform: translateX(1px);
-    }
-
-    .choice-letter {
-      flex-shrink: 0;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: var(--teal-light);
-      color: var(--teal);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .7rem;
-      font-weight: 700;
-      margin-top: 1px;
-      transition: background .2s, color .2s;
-    }
-
-    .choice-btn:hover .choice-letter {
-      background: var(--teal);
-      color: var(--white);
-    }
-
-    .continue-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .6rem;
-      background: var(--teal);
-      color: var(--white);
-      border: none;
-      padding: .85rem 1.8rem;
-      font-family: 'Source Serif 4', serif;
-      font-size: .95rem;
-      cursor: pointer;
-      transition: all .2s;
-      border-radius: 1px;
-      margin-top: 1.5rem;
-    }
-
-    .continue-btn:hover {
-      background: var(--teal-mid);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(26, 95, 110, .25);
-    }
-
-    .continue-btn.gold {
-      background: var(--gold);
-      margin-top: 2rem;
-    }
-
-    .continue-btn.gold:hover {
-      background: #a86d1e;
-      box-shadow: 0 4px 16px rgba(193, 127, 36, .3);
-    }
-
-    .btn-arrow {
-      transition: transform .2s;
-    }
-
-    .continue-btn:hover .btn-arrow {
-      transform: translateX(3px);
-    }
-
-    @media(max-width:800px) {
-      #app {
-        grid-template-columns: 1fr;
-      }
-
-      #sidebar {
-        display: none;
-      }
-
-      #main {
-        padding: 2rem 1.5rem;
-      }
-
-      h1 {
-        font-size: 1.9rem;
-      }
-
-      .final-box {
-        padding: 2rem;
-      }
-    }
-
-    .ministry-ref {
-      font-size: .83rem;
-      background: var(--teal-light);
-      border-left: 3px solid var(--teal);
-      padding: .75rem 1rem;
-      margin-bottom: 1.5rem;
-      color: var(--mid);
-      line-height: 1.65;
-      border-radius: 0 2px 2px 0;
-    }
-
-    .ministry-ref strong {
-      color: var(--teal);
-      font-weight: 600;
-    }
-
-    .framework-step {
-      font-size: .68rem;
-      color: rgba(200, 230, 237, .65);
-      line-height: 1.5;
-      margin-bottom: .4rem;
-      padding-left: .7rem;
-      border-left: 2px solid rgba(193, 127, 36, .4);
-    }
-
-    .framework-step strong {
-      color: var(--teal-pale);
-      font-weight: 600;
-      display: block;
-      margin-bottom: .1rem;
-    }
-
-    #sidebar {
-      grid-template-rows: unset;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Episteme Quest 🧠</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fdf6e3;
+    --card: #fff8ee;
+    --ink: #2d2a24;
+    --muted: #7a7265;
+    --accent1: #f4845f;
+    --accent2: #6a9fb5;
+    --accent3: #a8c66c;
+    --accent4: #e8b84b;
+    --accent5: #c87dd4;
+    --accent6: #e05f75;
+    --shadow: rgba(45,42,36,0.13);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(244,132,95,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(106,159,181,0.1) 0%, transparent 50%);
+  }
+  #game-container { width: 100%; max-width: 780px; }
+
+  .game-header { text-align: center; margin-bottom: 20px; }
+  .game-header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.6rem;
+    color: var(--accent1);
+    text-shadow: 3px 3px 0 rgba(244,132,95,0.18);
+    line-height: 1;
+  }
+  .game-header .subtitle { font-size: 0.95rem; color: var(--muted); font-weight: 700; margin-top: 4px; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; flex-wrap: wrap; }
+  .score-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-weight: 800; font-size: 1rem; color: var(--accent4);
+    background: white; border-radius: 50px; padding: 6px 16px;
+    border: 2px solid var(--accent4); box-shadow: 0 2px 8px rgba(232,184,75,0.2);
+    transition: transform 0.2s;
+  }
+  .score-badge.pop { animation: score-pop 0.4s ease; }
+  @keyframes score-pop { 0%{transform:scale(1)} 50%{transform:scale(1.3)} 100%{transform:scale(1)} }
+
+  .chapter-counter { font-size: 0.82rem; font-weight: 800; color: var(--muted); background: white; padding: 6px 14px; border-radius: 50px; border: 2px solid #e8e0d4; }
+
+  .progress-track {
+    display: flex; align-items: center; gap: 5px;
+    margin-bottom: 20px; padding: 10px 14px;
+    background: var(--card); border-radius: 50px;
+    box-shadow: 0 2px 12px var(--shadow); border: 2px solid rgba(255,255,255,0.9);
+  }
+  .chapter-dot {
+    flex: 1; height: 9px; border-radius: 10px;
+    background: #e8e0d4; transition: background 0.4s ease; position: relative;
+  }
+  .chapter-dot.done { background: var(--accent3); }
+  .chapter-dot.active { background: var(--accent1); animation: pulse-dot 1.6s infinite; }
+  @keyframes pulse-dot { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.5)} }
+  .chapter-dot .dot-tip {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: white; font-size: 0.6rem; font-weight: 800;
+    padding: 3px 8px; border-radius: 6px; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .chapter-dot:hover .dot-tip { opacity: 1; }
+
+  .card {
+    background: var(--card); border-radius: 20px;
+    padding: 28px 34px;
+    box-shadow: 0 4px 24px var(--shadow), 0 1px 4px rgba(0,0,0,0.06);
+    border: 2px solid rgba(255,255,255,0.85);
+    animation: card-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes card-in { from{opacity:0;transform:translateY(18px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+  .chapter-tag {
+    display: inline-block; font-size: 0.68rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 3px 11px; border-radius: 50px; margin-bottom: 12px; color: white;
+  }
+
+  /* NARRATOR BOX */
+  .narrator-box { display: flex; gap: 12px; margin-bottom: 18px; }
+  .narrator-avatar {
+    font-size: 2.2rem; flex-shrink: 0; width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; background: white; box-shadow: 0 2px 8px var(--shadow);
+  }
+  .narrator-name { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 3px; }
+  .narrator-text { font-size: 1rem; line-height: 1.68; color: var(--ink); font-weight: 600; }
+
+  /* CONCEPT BOXES */
+  .highlight-box {
+    background: rgba(244,132,95,0.1); border-left: 4px solid var(--accent1);
+    padding: 12px 16px; border-radius: 0 10px 10px 0;
+    margin: 14px 0; font-size: 0.93rem; font-weight: 600; color: var(--ink); line-height: 1.65;
+  }
+  .concept-box {
+    background: white; border: 2px solid #e8e0d4; border-radius: 14px;
+    padding: 14px 18px; margin: 14px 0;
+  }
+  .concept-box .concept-title {
+    font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--muted); margin-bottom: 8px;
+  }
+  .concept-box .concept-body { font-size: 0.93rem; font-weight: 600; line-height: 1.65; color: var(--ink); }
+  .concept-row {
+    display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap;
+  }
+  .concept-pill {
+    flex: 1; min-width: 140px; background: white; border: 2px solid #e8e0d4;
+    border-radius: 12px; padding: 12px 14px; text-align: center;
+  }
+  .concept-pill .pill-label { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 4px; }
+  .concept-pill .pill-value { font-size: 0.92rem; font-weight: 700; color: var(--ink); line-height: 1.4; }
+
+  /* QUOTE BOX */
+  .quote-box {
+    background: rgba(106,159,181,0.08); border-left: 4px solid var(--accent2);
+    padding: 12px 18px; border-radius: 0 12px 12px 0; margin: 14px 0;
+    font-style: italic; font-size: 0.95rem; font-weight: 600; line-height: 1.65; color: #3a5a6a;
+  }
+  .quote-attribution { font-style: normal; font-size: 0.75rem; font-weight: 800; color: var(--muted); margin-top: 6px; }
+
+  /* STEP SEQUENCE */
+  .step-sequence { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
+  .step-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: white; border-radius: 12px; padding: 12px 14px;
+    border: 2px solid #e8e0d4;
+  }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem; color: white; flex-shrink: 0;
+  }
+  .step-text { font-size: 0.92rem; font-weight: 600; line-height: 1.55; padding-top: 3px; }
+
+  /* COMPARE TABLE */
+  .compare-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.88rem; }
+  .compare-table th { padding: 8px 12px; text-align: left; font-weight: 800; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; }
+  .compare-table td { padding: 9px 12px; border-top: 1px solid #e8e0d4; font-weight: 600; line-height: 1.45; vertical-align: top; }
+  .compare-table tr:first-child td { border-top: none; }
+
+  /* SCENARIO STORY */
+  .scenario-box {
+    background: #f8f4ec; border: 2px dashed #d4c8b4; border-radius: 14px;
+    padding: 16px 18px; margin: 14px 0;
+  }
+  .scenario-box .scenario-label {
+    font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--muted); margin-bottom: 8px;
+  }
+  .scenario-box .scenario-text { font-size: 0.95rem; font-weight: 600; line-height: 1.65; }
+
+  /* QUESTION */
+  .question-text {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.22rem; color: var(--ink); margin-bottom: 16px; line-height: 1.45;
+  }
+  .choices { display: flex; flex-direction: column; gap: 9px; }
+  .choice-btn {
+    background: white; border: 2.5px solid #e8e0d4; border-radius: 13px;
+    padding: 13px 16px; text-align: left; cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700;
+    color: var(--ink); line-height: 1.5; transition: all 0.17s ease;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--accent2); background: #f0f8fc; transform: translateX(4px); box-shadow: 0 2px 12px rgba(106,159,181,0.2); }
+  .choice-btn.correct { border-color: var(--accent3); background: rgba(168,198,108,0.12); animation: bounce-correct 0.4s ease; }
+  .choice-btn.wrong { border-color: var(--accent6); background: rgba(224,95,117,0.1); animation: shake 0.4s ease; }
+  .choice-letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%; background: var(--bg);
+    font-size: 0.78rem; font-weight: 800; border: 2px solid #e8e0d4;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .choice-btn.correct .choice-letter { background: var(--accent3); border-color: var(--accent3); color: white; }
+  .choice-btn.wrong .choice-letter { background: var(--accent6); border-color: var(--accent6); color: white; }
+  @keyframes bounce-correct { 0%{transform:scale(1)} 40%{transform:scale(1.03) translateX(4px)} 100%{transform:scale(1) translateX(4px)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* TRUE/FALSE */
+  .tf-container { display: flex; gap: 12px; margin-top: 4px; }
+  .tf-btn {
+    flex: 1; padding: 16px; border-radius: 14px; border: 2.5px solid #e8e0d4;
+    font-family: 'Fredoka One', cursive; font-size: 1.3rem; cursor: pointer;
+    background: white; transition: all 0.17s; text-align: center;
+  }
+  .tf-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
+  .tf-btn.correct { border-color: var(--accent3); background: rgba(168,198,108,0.15); }
+  .tf-btn.wrong { border-color: var(--accent6); background: rgba(224,95,117,0.1); }
+
+  /* FEEDBACK */
+  .feedback-box {
+    margin-top: 14px; padding: 14px 17px; border-radius: 13px;
+    font-size: 0.93rem; font-weight: 700; line-height: 1.6;
+    animation: card-in 0.3s ease;
+  }
+  .feedback-box.good { background: rgba(168,198,108,0.15); border: 2px solid var(--accent3); color: #4a6a1a; }
+  .feedback-box.bad { background: rgba(224,95,117,0.1); border: 2px solid var(--accent6); color: #7a2030; }
+  .feedback-emoji { font-size: 1.3rem; margin-right: 6px; }
+
+  /* BUTTONS */
+  .next-btn {
+    display: block; margin: 18px auto 0;
+    color: white; border: none; border-radius: 50px;
+    padding: 13px 34px; font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .next-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
+  /* INTRO */
+  .center-screen { text-align: center; padding: 10px 0; }
+  .center-screen h2 { font-family: 'Fredoka One', cursive; font-size: 1.9rem; margin-bottom: 8px; line-height: 1.2; }
+  .center-screen p { font-size: 0.97rem; color: var(--muted); font-weight: 600; line-height: 1.65; max-width: 520px; margin: 0 auto 16px; }
+  .big-emoji { font-size: 3.8rem; margin-bottom: 10px; display: block; }
+  .toc-list { list-style: none; display: flex; flex-direction: column; gap: 7px; margin: 16px auto; max-width: 500px; text-align: left; }
+  .toc-list li { display: flex; align-items: center; gap: 11px; padding: 9px 14px; background: white; border-radius: 11px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 1px 6px var(--shadow); }
+  .start-btn {
+    border: none; border-radius: 50px; padding: 15px 46px;
+    font-family: 'Fredoka One', cursive; font-size: 1.25rem;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px; color: white;
+    background: var(--accent1); box-shadow: 0 4px 20px rgba(244,132,95,0.4);
+  }
+  .start-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(244,132,95,0.5); }
+
+  /* CHAPTER INTRO */
+  .chapter-intro-card { text-align: center; padding: 8px 0; }
+  .ch-emoji { font-size: 3.4rem; margin-bottom: 8px; display: block; animation: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes bounce-in { from{transform:scale(0.3);opacity:0} to{transform:scale(1);opacity:1} }
+  .chapter-intro-card h2 { font-family: 'Fredoka One', cursive; font-size: 1.65rem; margin-bottom: 4px; }
+  .chapter-intro-card .author { font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
+  .chapter-intro-card p { font-size: 0.96rem; font-weight: 600; color: var(--ink); line-height: 1.65; max-width: 520px; margin: 0 auto 18px; }
+  .key-concepts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+  .key-concept-tag { background: white; border: 2px solid #e8e0d4; border-radius: 50px; padding: 5px 13px; font-size: 0.75rem; font-weight: 800; color: var(--ink); }
+
+  /* FINAL */
+  .medal { font-size: 4.2rem; display: block; margin-bottom: 6px; animation: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s both; }
+  .score-breakdown { display: flex; flex-direction: column; gap: 6px; margin: 14px auto; max-width: 440px; text-align: left; }
+  .score-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: white; border-radius: 10px; font-size: 0.86rem; font-weight: 700; box-shadow: 0 1px 4px var(--shadow); }
+  .score-row .pts { font-family: 'Fredoka One', cursive; font-size: 1.1rem; }
+  .replay-btn {
+    border: none; border-radius: 50px; padding: 13px 38px;
+    font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; transition: all 0.2s; color: white;
+    background: var(--accent2); box-shadow: 0 4px 14px rgba(106,159,181,0.35); margin-top: 14px;
+  }
+  .replay-btn:hover { transform: translateY(-2px); }
+
+  .confetti-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; overflow: hidden; }
+  .confetti-piece { position: absolute; width: 10px; height: 10px; border-radius: 2px; animation: confetti-fall linear forwards; }
+  @keyframes confetti-fall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+
+  @media(max-width:560px){
+    .card{padding:20px 16px}
+    .game-header h1{font-size:2rem}
+    .question-text{font-size:1.05rem}
+    .concept-row{flex-direction:column}
+  }
+</style>
 </head>
-
 <body>
-  <div id="app">
-    <header id="header">
-      <div id="header-left">
-        <span class="school">Grandview Heights Secondary &nbsp;&middot;&nbsp; Surrey, BC</span>
-        <div class="hdivider"></div>
-        <span class="htitle">The Incident in the Hall</span>
-      </div>
-      <div id="header-right">
-        <a id="ministry-link"
-          href="https://www2.gov.bc.ca/assets/gov/erase/documents/mental-health-wellness/racism-response-guidelines.pdf"
-          target="_blank" rel="noopener">Ministry Response Guidelines &#8599;</a>
-        <button id="restart-btn">&#x21BA; &nbsp;Start Over</button>
-      </div>
-    </header>
-    <div id="progress-bar">
-      <div id="progress-fill"></div>
-    </div>
-    <aside id="sidebar">
-      <h3>Your Path</h3>
-      <div id="path-tracker"></div>
-      <div style="margin-top:2rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);">
-        <h3>Ministry Framework</h3>
-        <div class="framework-step"><strong>1. Stop the incident</strong>Call in or call out immediately.</div>
-        <div class="framework-step"><strong>2. Centre the harmed</strong>Safer space. Agency. Trusted adult.</div>
-        <div class="framework-step"><strong>3. Seek &amp; document</strong>Share once. Document well.</div>
-        <div class="framework-step"><strong>4. Harmer accountability</strong>Code of Conduct. Parents. Support.</div>
-        <div class="framework-step"><strong>5. Restore community</strong>Restorative practices. Follow up.</div>
-        <div class="framework-step"><strong>6. Reflect &amp; resource</strong>Pattern or one-off? Replenish.</div>
-      </div>
-      <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);">
-        <h3>The Six Thinkers</h3>
-        <div class="thinker-tag"><strong>Rawls</strong> &mdash; Who does each choice protect?</div>
-        <div class="thinker-tag"><strong>Sen</strong> &mdash; What does she actually need?</div>
-        <div class="thinker-tag"><strong>Noddings</strong> &mdash; Will she feel cared for?</div>
-        <div class="thinker-tag"><strong>hooks</strong> &mdash; What does silence teach?</div>
-        <div class="thinker-tag"><strong>Greene</strong> &mdash; Can you imagine this differently?</div>
-        <div class="thinker-tag"><strong>Dewey</strong> &mdash; What did everyone learn today?</div>
-      </div>
-    </aside>
-    <main id="main">
-      <div id="screen-container"></div>
-    </main>
+<div id="game-container">
+  <div class="game-header">
+    <h1>🧠 Episteme Quest</h1>
+    <div class="subtitle">A philosophy review adventure · Enhanced Edition</div>
   </div>
-  <script>
-    const NODES = {
 
-      atmosphere: {
-        type: "atmosphere",
-        label: "A Scenario for Educators — Aligned with the B.C. Ministry of Education Racism Response Guidelines 2025",
-        title: "The Incident in the Hall",
-        body: [
-          "The hallway is loud in the way hallways always are at 9:20 — lockers banging, someone’s music bleeding through earphones, two grade eights running past the water fountain. You’re carrying your coffee and half your attention is already in your classroom.",
-          "Near the lockers, a loose cluster of four students are watching something on a phone, laughing. An Indigenous student you know slightly — grade ten, engaged in class, tends to sit near the front — is making her way through the same corridor.",
-          "As she passes the group, one of the boys says something. You catch it clearly. It’s a derogatory comment about her identity, delivered in the casual tone of someone who isn’t really thinking about it. Two of the others laugh. A third goes quiet and looks at the floor.",
-          "She keeps walking. Her expression doesn’t change. She doesn’t look back.",
-          "The bell rings. Thirty students are about to walk through your door.",
-          "The B.C. Ministry of Education’s Racism Response Guidelines are clear: all educators have a collective responsibility to disrupt and respond to racist incidents. What you do in the next few minutes matters — not just for her, but for everyone who witnessed it."
-        ],
-        next: "decision_1",
-        progress: 5
-      },
+  <div class="top-bar">
+    <div class="chapter-counter" id="chapter-counter">Chapter 1 of 6</div>
+    <div class="score-badge" id="score-badge">⭐ <span id="score-display">0</span> pts</div>
+  </div>
 
-      decision_1: {
-        type: "decision",
-        step: "Step 1 of 6 — Stop the Incident",
-        title: "The Immediate Moment",
-        ministryRef: "The Ministry framework requires all educators to immediately name the behaviour and intervene. Two options: “call in” (address privately and supportively) or “call out” (address publicly when safety requires it). Both require naming what happened. Remaining silent is not aligned with the framework.",
-        question: "What do you do right now?",
-        pausePrompt: "Before you click — the Ministry states that all educators must acknowledge that what was said or done is inappropriate, and remind everyone it goes against the Code of Conduct. Talk about this for two minutes: what does each option risk, and for whom?",
-        choices: [
-          {
-            letter: "A",
-            text: "You call in — step toward the students, lower your voice, and say directly: “I heard that. That comment is not acceptable, and it goes against our Code of Conduct. We will be talking about this.” Then you walk in.",
-            next: "decision_2"
-          },
-          {
-            letter: "B",
-            text: "You call out — the hallway is still busy and others heard it too. You address it clearly and audibly: “That kind of comment is not okay in this school — not ever.” You make eye contact with the student who spoke, then walk in.",
-            next: "decision_2"
-          },
-          {
-            letter: "C",
-            text: "You say nothing. You tell yourself you will deal with it properly after class, when you’ve had time to think and the audience is gone.",
-            next: "consequence_silence"
-          }
-        ],
-        progress: 16
-      },
+  <div class="progress-track" id="progress-track"></div>
+  <div class="card" id="main-card"></div>
+</div>
+<div class="confetti-container" id="confetti-container"></div>
 
-      consequence_silence: {
-        type: "complication",
-        label: "What the Ministry says about silence",
-        body: [
-          "You walk in. Class happens. Thirty students — including the one who went quiet — saw you hear it and say nothing.",
-          "The Ministry framework is explicit: all educators have a collective responsibility to disrupt and respond to racist incidents immediately. Naming the behaviour matters not only for the student who was targeted, but for everyone watching. The guidelines note that this is a micro or macroaggression — a racist incident that requires a response regardless of whether it was intentional.",
-          "The Ministry distinguishes between calling in (a quieter, private intervention) and calling out (a more public one). Both are valid responses to different situations. What is not aligned with the framework is letting the moment pass without naming the behaviour at all.",
-          "You can still act. But the window for an immediate, visible response has closed. What you do next carries that weight."
-        ],
-        question: "Class is underway. What are you thinking?",
-        choices: [
-          {
-            letter: "A",
-            text: "You’re planning a private conversation with the students involved after class. Delayed, but still direct.",
-            next: "decision_2_late"
-          },
-          {
-            letter: "B",
-            text: "You’re thinking about her first. You want to check in before you do anything else.",
-            next: "decision_2_late"
-          },
-          {
-            letter: "C",
-            text: "You’re second-guessing yourself. In hindsight the comment doesn’t feel quite as clear as it did in the moment. Maybe you misread it.",
-            next: "consequence_rationalize"
-          }
-        ],
-        progress: 24
-      },
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// CHAPTER DATA
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const CHAPTERS = [
 
-      consequence_rationalize: {
-        type: "complication",
-        label: "Two days later",
-        body: [
-          "You didn’t follow up. The morning moved on the way mornings do.",
-          "Two days later, a colleague mentions casually that they’ve noticed a particular group of students can be pretty rough on some of the quieter kids. They are not referencing anything specific. They have no idea what you saw.",
-          "You are the only adult who witnessed it clearly. The Ministry’s framework asks educators to reflect: was this a one-off incident, or an extension of the broader school culture? That question cannot be answered if the incident was never named.",
-          "You still have choices. They are harder now, but they exist."
-        ],
-        question: "What do you do?",
-        choices: [
-          {
-            letter: "A",
-            text: "You tell your colleague what you saw and begin the process from here. You are two days late, and you are not going to let it become three.",
-            next: "decision_2_late"
-          },
-          {
-            letter: "B",
-            text: "You find her and check in — genuinely, without explanation. Just attention, offered without agenda.",
-            next: "decision_2_late"
-          },
-          {
-            letter: "C",
-            text: "You do nothing further. The moment has receded. Acting now feels disproportionate.",
-            next: "convergence"
-          }
-        ],
-        progress: 28
-      },
-
-      decision_2: {
-        type: "decision",
-        step: "Step 2 of 6 — Centre the Harmed Person",
-        title: "After the bell. Where does your attention go first?",
-        ministryRef: "The Ministry framework is unambiguous about sequence: centre the harmed person before addressing the harmer. Connect with her, provide a safer and supportive space, identify her immediate needs, and allow for agency by letting her communicate in a way that is comfortable for her. Check in with a trusted adult: counsellor, Cultural Advisor, coach.",
-        context: "The lesson is underway. Students are working. According to the Ministry’s framework, your first obligation after stopping the incident is to the student who was targeted — not to the harmer, not to documentation, not to the lesson plan.",
-        question: "What do you prioritize?",
-        pausePrompt: "Before you click — the Ministry is explicit that the harmed person is centred first. What does each option communicate to her about whose experience matters most in this process?",
-        choices: [
-          {
-            letter: "A",
-            text: "You find her as soon as possible — end of period, or by asking a trusted staff member to check in now. You want to ensure she has access to a safer space and a trusted adult before anything else happens.",
-            next: "decision_3_agency"
-          },
-          {
-            letter: "B",
-            text: "You go to your counsellor or department head first to get guidance on how to approach her. You want to handle this correctly.",
-            next: "decision_3_seq"
-          },
-          {
-            letter: "C",
-            text: "You speak to the students who made the comment first, while it’s fresh and before they’ve had time to talk to each other.",
-            next: "consequence_harmer_first"
-          }
-        ],
-        progress: 32
-      },
-
-      decision_2_late: {
-        type: "decision",
-        step: "Step 2 of 6 — Centre the Harmed Person (Late Start)",
-        title: "The framework still applies. It starts with her.",
-        ministryRef: "Even when the immediate window has passed, the Ministry’s guidance holds: the harmed person must be centred first. Provide a safer space. Connect with a trusted adult. Allow for agency in how she communicates.",
-        context: "Whether it has been an hour or two days, the Ministry’s framework begins the same way — with the person who was targeted.",
-        question: "How do you approach her?",
-        choices: [
-          {
-            letter: "A",
-            text: "You find her and sit nearby without leading with the incident. You ask how she’s doing and give her space to direct what happens next.",
-            next: "decision_3_agency"
-          },
-          {
-            letter: "B",
-            text: "You ask the school counsellor to check in with her. You want her to have access to a skilled support person, not just you.",
-            next: "decision_3_seq"
-          },
-          {
-            letter: "C",
-            text: "You tell her directly what you saw, that it was not okay, and that you are going to follow up on it. You want her to know she was not invisible.",
-            next: "decision_3_agency"
-          }
-        ],
-        progress: 32
-      },
-
-      consequence_harmer_first: {
-        type: "complication",
-        label: "On sequencing — what the Ministry says",
-        isContinue: true,
-        next: "decision_2",
-        body: [
-          "Addressing the harmer first is a natural impulse, especially when you want accountability to happen quickly. But the Ministry’s Racism Response Guidelines are explicit about the sequence: the harmed person is centred first.",
-          "The framework asks: how can the voice and experience of the harmed person be centred? That question has to come before the question of what happens to the harmer. If she finds out later that you spoke to the students who targeted her before you spoke to her, the message — however unintentionally — is that managing the situation took priority over her experience of it.",
-          "The students are not going anywhere. Redirect and start with her."
-        ],
-        progress: 32
-      },
-
-      decision_3_agency: {
-        type: "complication",
-        label: "She’s in front of you",
-        step: "Step 2 continued — Allowing for Agency",
-        body: [
-          "You found her, or she was found. You tell her you saw what happened in the hallway. She nods, very slightly.",
-          "The Ministry framework is specific here: allow for agency by letting the harmed person communicate in a way that is comfortable for them. Your role is to hold space, not to extract what you need for the process.",
-          "She says: “I’m fine.”"
-        ],
-        question: "How do you respond?",
-        choices: [
-          {
-            letter: "A",
-            text: "You hold space without pressing. You tell her you believe her, that you’re glad she’s okay, and that you want her to know you saw it and will follow up — not because she needs to do anything, but because that is your responsibility.",
-            next: "decision_4_doc"
-          },
-          {
-            letter: "B",
-            text: "You ask if there is a trusted adult she would like you to connect her with — a counsellor, a Cultural Advisor, a coach. The Ministry specifically names these as supports. You want her to have access to someone beyond you.",
-            next: "decision_4_doc"
-          },
-          {
-            letter: "C",
-            text: "You press gently. You tell her she doesn’t have to be fine about it, and that this kind of thing has a way of landing harder than it seems in the moment.",
-            next: "consequence_pressing"
-          }
-        ],
-        progress: 48
-      },
-
-      consequence_pressing: {
-        type: "complication",
-        label: "What the Ministry says about agency",
-        isContinue: true,
-        next: "decision_4_doc",
-        body: [
-          "She looks at you for a moment and says: “I know. I’ve been fine before.”",
-          "There is nothing hostile in it. It is information about how often she has been here.",
-          "The Ministry’s framework is specific: the harmed person should be allowed to communicate in a way that is comfortable for them. Pressing — even gently, even with care — can shift the dynamic from support to another form of demand on her.",
-          "Her “I’m fine” may mean she does not want to process this with you right now. That is her right. Your role is to ensure she knows support exists and that you are following through on your responsibilities — not to require her to perform distress before you act."
-        ],
-        progress: 48
-      },
-
-      decision_3_seq: {
-        type: "decision",
-        step: "Step 3 of 6 — Seek, Find, and Document",
-        title: "You went to a colleague first. Documentation comes next.",
-        ministryRef: "The Ministry framework: share once and document well. The harmed student should not have to repeat their trauma. Prioritize accurate note-taking. Preserve privacy — ask parties not to discuss the investigation except with designated personnel.",
-        context: "Your counsellor or department head has been briefed. The framework now requires careful documentation — what you observed, when, and what you said. This protects the student, anchors the process, and prevents the incident from existing only in memory.",
-        question: "How do you approach documentation?",
-        choices: [
-          {
-            letter: "A",
-            text: "You write down exactly what you witnessed — date, time, location, what was said, who was present, what you did — before speaking to any student, so the record is not shaped by subsequent conversations.",
-            next: "decision_4_doc"
-          },
-          {
-            letter: "B",
-            text: "You speak with her first, then document — ensuring the record includes her perspective alongside your own observation.",
-            next: "decision_4_doc"
-          },
-          {
-            letter: "C",
-            text: "You plan to document after speaking with everyone involved, so you have the most complete picture.",
-            next: "consequence_late_doc"
-          }
-        ],
-        progress: 48
-      },
-
-      consequence_late_doc: {
-        type: "complication",
-        label: "On documentation timing",
-        isContinue: true,
-        next: "decision_4_doc",
-        body: [
-          "The Ministry’s guideline to share once and document well is specifically designed to prevent a harmed student from having to repeat their experience to multiple people. It is also designed to prevent the record from being shaped by conversations that happen after the fact.",
-          "Waiting until all parties have been interviewed means your notes may reflect those conversations rather than what you independently witnessed. Early documentation of what you personally observed is the anchor that keeps the process honest.",
-          "There is still time to document well. Do it before the next conversation."
-        ],
-        progress: 48
-      },
-
-      decision_4_doc: {
-        type: "decision",
-        step: "Step 4 of 6 — Ensure Accountability",
-        title: "Now: the students who made the comment.",
-        ministryRef: "The Ministry framework: inform the student that the behaviour goes against the Code of Conduct. Contact parent or caregiver. Consider what support the student who caused harm needs — the harmer may have been harmed themselves. Accountability must include consequences but also education to promote reflection and growth.",
-        context: "The harmed student has been centred. Documentation is underway. The framework now turns to the student who made the comment. The goal is not only consequence — it is accountability, education, and consideration of the harmer’s own context.",
-        question: "How do you structure this conversation?",
-        pausePrompt: "Before you click — the Ministry asks educators to consider whether there is a history of mental health challenges, an IEP, or living circumstances that may have contributed to the behaviour. Accountability is not the same as punishment, and support for the harmer is part of the framework.",
-        choices: [
-          {
-            letter: "A",
-            text: "You meet with him privately. You name what he said, explain that it violates the Code of Conduct, share the impact on the student who was targeted, and ask what he thinks accountability looks like. You then contact his parents or caregivers.",
-            next: "decision_5"
-          },
-          {
-            letter: "B",
-            text: "Before meeting with him, you check whether there is anything in his file — an IEP, known circumstances, previous incidents — that provides context. Then you meet, name the behaviour clearly, and contact his parents or caregivers.",
-            next: "decision_5"
-          },
-          {
-            letter: "C",
-            text: "You focus the conversation on consequences per the Code of Conduct and refer the deeper educational conversation to administration. You contact his parents or caregivers.",
-            next: "decision_5"
-          }
-        ],
-        progress: 64
-      },
-
-      decision_5: {
-        type: "decision",
-        step: "Step 5 of 6 — Restore Community",
-        title: "The days that follow. What does restoration look like?",
-        ministryRef: "The Ministry framework: follow up with the harmed student at defined intervals — next day, one week, one month. Identify invisible harm to witnesses. Consider restorative practices only when the harmed person is willing. Restoring justice does not mean the absence of consequences.",
-        context: "The immediate steps have been taken. The incident is documented. Accountability is in motion. The Ministry’s framework now asks how community is restored — and it is explicit that this includes everyone who witnessed the incident, not only the two students directly involved.",
-        question: "What do you prioritize?",
-        choices: [
-          {
-            letter: "A",
-            text: "You check in with her the next day. Not about the incident — just genuine attention. You do the same one week later, and one month later. The Ministry’s framework prescribes these specific intervals.",
-            next: "decision_6"
-          },
-          {
-            letter: "B",
-            text: "You check in with the student who went quiet. The Ministry explicitly names invisible harm to witnesses as something educators must identify and respond to. She saw it. What did it cost her?",
-            next: "decision_6"
-          },
-          {
-            letter: "C",
-            text: "With her consent, you explore whether a restorative process — led by a skilled practitioner, not by you alone — might be appropriate. You make it an invitation. You do not push.",
-            next: "decision_6"
-          }
-        ],
-        progress: 78
-      },
-
-      decision_6: {
-        type: "decision",
-        step: "Step 6 of 6 — Reflect and Resource",
-        title: "Two weeks later. The Ministry asks you to reflect.",
-        ministryRef: "The Ministry’s final step: reflect on the event (one-off or school culture?), reflect on the response (timely, considerate, healing-oriented?), resource yourself (what do you need to replenish capacity?), and determine whether actions were reactive or responsive.",
-        context: "The same group of students is in the hallway. Same energy. Nothing formal has changed at the school-wide level. You are sitting with the Ministry’s hardest question: would First Nations and racialized communities agree that they were seen, valued, and supported by how this was handled?",
-        question: "Which reflection most honestly describes where you are?",
-        choices: [
-          {
-            letter: "A",
-            text: "You have raised this with administration as a potential pattern, not just a single incident. The Ministry asks whether this is a one-off or an extension of school culture — answering that question requires it to be on someone’s radar beyond your classroom.",
-            next: "convergence"
-          },
-          {
-            letter: "B",
-            text: "You have had a broader conversation with your class about what kind of community you want the room to be — not about this incident, but connected to it. The Ministry frames incident response as part of long-term anti-racist education, not just crisis management.",
-            next: "convergence"
-          },
-          {
-            letter: "C",
-            text: "You have been honest with yourself about what you could have done differently, and you have identified what you need to keep doing this work well. The Ministry explicitly asks educators to resource themselves after responding to incidents of harm.",
-            next: "convergence"
-          }
-        ],
-        progress: 90
-      },
-
-      convergence: {
-        type: "convergence",
-        label: "All paths arrive here",
-        title: "The last day before spring break.",
-        question: "Looking back across the six steps, which statement most honestly describes your path?",
-        body: [
-          "The Indigenous student passes you in the hallway. She is walking with someone you have not seen her with before. She is mid-conversation. She does not notice you.",
-          "She looks fine. She might actually be fine. Or she has learned, over years of this, to look fine in hallways.",
-          "The Ministry’s Racism Response Guidelines ask educators to reflect on whether First Nations and racialized communities would agree that they were seen, valued, and supported by the response and how it was carried out. That may require direct consultation with the local First Nation.",
-          "That is the question underneath all six steps."
-        ],
-        choices: [
-          {
-            letter: "1",
-            text: "I stopped the incident immediately and named the behaviour. That was the foundation everything else depended on.",
-            next: "final"
-          },
-          {
-            letter: "2",
-            text: "I centred her first — before documentation, before the harmer, before administration. The sequence mattered.",
-            next: "final"
-          },
-          {
-            letter: "3",
-            text: "I followed the full framework: stopped, centred, documented, accountability, restoration, reflection. Not perfectly, but with intention.",
-            next: "final"
-          },
-          {
-            letter: "4",
-            text: "I struggled with the framework. I did some steps well and not others. The honest reflection is uncomfortable.",
-            next: "final"
-          }
-        ],
-        progress: 96
-      },
-
-      final: {
-        type: "final",
-        label: "End of Scenario",
-        body: [
-          "The B.C. Ministry of Education’s Racism Response Guidelines were developed in consultation with educators from over 40 school districts, informed by the voices of racialized communities and students. They exist because incidents like this one happen in hallways across the province every day.",
-          "The framework is not a checklist. It is an orientation — toward the harmed person first, toward accountability that includes both consequences and education, toward restoration that is led by the person who was targeted, and toward honest reflection on whether the response would be recognized by that student and her community as having genuinely seen, valued, and supported her.",
-          "The Ministry’s final question is the hardest one: would First Nations and racialized communities agree that they were seen, valued, and supported by the response and how it was carried out? That question may require going beyond this building to find out."
-        ],
-        question: "You were the only adult who saw what happened that morning. What did you do with that — and would she recognize your response as having been for her?",
-        thinkers: [
-          { name: "Rawls", q: "The Ministry asks who each choice protects. Rawls would ask the same: whose interests were actually served by the sequence of your decisions?" },
-          { name: "Sen", q: "The framework centres the harmed person’s actual needs, not just what was provided. Sen would ask: what was she genuinely able to do with the support she received?" },
-          { name: "Noddings", q: "The framework says care only counts when it’s received. Did she experience your response as care, or as institutional process?" },
-          { name: "hooks", q: "The Ministry states that all educators have a collective responsibility to disrupt. hooks would say that failing to name the behaviour is itself a pedagogical act. What did your choice teach?" },
-          { name: "Greene", q: "The framework asks whether communities would agree they were seen and valued. Greene would ask: can you imagine a school where that question does not need to be asked?" },
-          { name: "Dewey", q: "The Ministry asks whether the incident was a one-off or an extension of school culture. Dewey would ask what the students in that hallway actually learned today — and who intended to teach it." }
-        ],
-        progress: 100
+// ──────────────────────────────────────────────────────────────────────────
+// CH 1 · NAGEL · Knowing vs. Thinking
+// ──────────────────────────────────────────────────────────────────────────
+{
+  id: 0, emoji: "💬", color: "#6a9fb5",
+  tag: "Nagel", title: "Knowing vs. Thinking", author: "Jennifer Nagel",
+  concepts: ["Factivity", "Factive verbs", "Non-factive verbs", "Projected use"],
+  intro: "You're at school and your friend says 'I KNOW the test is tomorrow.' Her roommate says 'I THINK the test is tomorrow.' One of them has to be wrong — but which? Jennifer Nagel digs into the surprisingly deep difference between these two tiny words.",
+  scenes: [
+    {
+      type: "narrative",
+      narrator: { emoji: "💬", name: "Setting the Scene" },
+      text: "Consider two sentences:\n\n\"Jill <strong>knows</strong> that her door is locked.\"\n\"Bill <strong>thinks</strong> that his door is locked.\"\n\nThey sound similar — but there's a huge hidden difference. If Jill's door is actually <em>not</em> locked, the first sentence becomes <strong>impossible</strong>. The second sentence? Totally fine.",
+      extra: {
+        type: "compare",
+        headers: ["Sentence", "Door actually unlocked?", "Sentence still makes sense?"],
+        rows: [
+          ["Jill <em>knows</em> the door is locked", "Yes — it's unlocked", "❌ Impossible — contradiction!"],
+          ["Bill <em>thinks</em> the door is locked", "Yes — it's unlocked", "✅ Fine — Bill is just wrong"]
+        ]
       }
-    };
-
-    let pathHistory = [];
-
-    function render(nodeId) {
-      const node = NODES[nodeId];
-      if (!node) { console.error("Missing node:", nodeId); return; }
-      updateProgress(node.progress || 0);
-      const container = document.getElementById("screen-container");
-      container.innerHTML = "";
-      const wrapper = document.createElement("div");
-      wrapper.className = "screen";
-      wrapper.innerHTML = buildNodeHtml(node);
-      container.appendChild(wrapper);
-      wrapper.querySelectorAll("[data-choice-index]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const idx = parseInt(btn.getAttribute("data-choice-index"), 10);
-          const choice = node.choices[idx];
-          const short = choice.text.replace(/<[^>]+>/g, "").substring(0, 60) + (choice.text.length > 60 ? "..." : "");
-          addToPath("<em style=\"color:var(--gold);font-style:normal;\">" + choice.letter + "</em> — " + short);
-          render(choice.next);
-        });
-      });
-      wrapper.querySelectorAll("[data-continue-to]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const t = btn.getAttribute("data-continue-to");
-          if (t === "__restart__") { restart(); } else { render(t); }
-        });
-      });
-      document.getElementById("main").scrollTo({ top: 0, behavior: "smooth" });
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function miniRef(text) {
-      if (!text) return "";
-      return "<div class=\"ministry-ref\"><strong>Ministry Guidance:</strong> " + text + "</div>";
-    }
-    function bodyHtml(paragraphs) {
-      return "<div class=\"body-text\">" + paragraphs.map(p => "<p>" + p + "</p>").join("") + "</div>";
-    }
-    function choicesHtml(choices) {
-      return "<div class=\"choices\">" + choices.map((c, i) =>
-        "<button class=\"choice-btn\" data-choice-index=\"" + i + "\"><span class=\"choice-letter\">" + c.letter + "</span><span>" + c.text + "</span></button>"
-      ).join("") + "</div>";
-    }
-    function pauseHtml(text) {
-      if (!text) return "";
-      return "<div class=\"pause-prompt\"><div class=\"pause-label\">&#9646; Pause &amp; Discuss</div><p>" + text + "</p></div>";
-    }
-
-    function buildNodeHtml(node) {
-      if (node.type === "atmosphere") {
-        return "<div class=\"screen-label\">" + node.label + "</div><div class=\"section-rule\"></div><h1>" + node.title + "</h1>" +
-          bodyHtml(node.body) + "<button class=\"continue-btn\" data-continue-to=\"" + node.next + "\">Begin the scenario <span class=\"btn-arrow\">&#8594;</span></button>";
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "🔑", name: "The Key Concept: Factivity" },
+      text: "This is what Nagel calls <strong>factivity</strong>. A verb is <em>factive</em> if it only connects a person to <em>true</em> propositions. 'Know' is factive. You literally cannot know something false — by definition.\n\n'Think' and 'believe' are <strong>non-factive</strong> — you can think or believe something totally wrong.",
+      extra: {
+        type: "pills",
+        items: [
+          { label: "Factive Verbs", value: "know · realize · see that · remember that · prove that" },
+          { label: "Non-Factive Verbs", value: "think · believe · hope · suspect · say · doubt" }
+        ]
       }
-      if (node.type === "decision") {
-        const ctx = node.context ? "<div class=\"context\"><p>" + node.context + "</p></div>" : "";
-        return "<div class=\"decision-step\">" + (node.step || "") + "</div><div class=\"section-rule\"></div><h2>" + node.title + "</h2>" +
-          miniRef(node.ministryRef) + ctx + pauseHtml(node.pausePrompt) +
-          "<p class=\"question-label\">" + (node.question || "What do you do?") + "</p>" + choicesHtml(node.choices);
+    },
+    {
+      type: "question",
+      question: "Your friend says: 'I knew I got an A — but it turned out I got a C.' What does Nagel say is going on here?",
+      choices: [
+        { text: "She literally knew she got an A, then unknew it when the grade changed.", correct: false },
+        { text: "She's using 'knew' in a projected, non-literal way — recalling how certain she felt. Since the belief was false, it was never real knowledge.", correct: true },
+        { text: "She had justified belief, so she did know at the time.", correct: false },
+        { text: "This shows knowledge doesn't always require truth.", correct: false }
+      ],
+      feedback: {
+        correct: "🎯 Exactly! Nagel calls this the 'projected' use of 'know.' The speaker is projecting herself back into a moment when it FELT like she knew. But since 'know' is factive, you can't literally know something false — the emphasis ('I KNEW!') signals she's distancing herself from that feeling.",
+        wrong: "Remember: 'know' is factive — it can only attach to true propositions. When someone says 'I knew X' but X was false, they're using 'knew' loosely to describe a feeling of certainty. Nagel calls this the 'projected' use. The italics or emphasis is a clue that it's non-literal."
       }
-      if (node.type === "complication") {
-        const actionHtml = node.isContinue
-          ? "<button class=\"continue-btn\" data-continue-to=\"" + node.next + "\">Continue <span class=\"btn-arrow\">&#8594;</span></button>"
-          : "<p class=\"question-label\">" + (node.question || "What do you do?") + "</p>" + choicesHtml(node.choices);
-        return "<div class=\"complication-label\">" + (node.label || "") + "</div>" +
-          (node.step ? "<div class=\"decision-step\" style=\"margin-bottom:1rem;\">" + node.step + "</div>" : "") +
-          "<div class=\"section-rule\"></div>" + bodyHtml(node.body) + pauseHtml(node.pausePrompt) + actionHtml;
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "💎", name: "Hard to Spot Doesn't Mean No Difference" },
+      text: "But wait — if it's so hard to tell real knowledge from fake knowledge, does the difference even matter? Nagel has a sharp answer: <strong>just because something is hard to distinguish doesn't mean there's no real difference.</strong>",
+      extra: {
+        type: "quote",
+        text: "In a market flooded with imitations it can be hard to tell a real diamond from a fake, but the practical difficulty of identifying the genuine article shouldn't make us think there is no difference out there: real diamonds have a special essence — a special structure of carbon atoms — not shared by lookalikes.",
+        attribution: "— Jennifer Nagel"
       }
-      if (node.type === "convergence") {
-        return "<div class=\"convergence-box\"><div class=\"convergence-label\">" + node.label + "</div><div class=\"section-rule\"></div><h2>" + node.title + "</h2>" +
-          bodyHtml(node.body) + "<p class=\"question-label\">" + (node.question || "") + "</p>" + choicesHtml(node.choices) + "</div>";
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "👨‍⚖️", name: "What Else Does Knowledge Need?" },
+      text: "Truth alone isn't enough for knowledge. Nagel gives us a powerful example: a father is <em>utterly certain</em> his daughter is innocent of a crime. But his certainty is based on emotion — he's deliberately avoiding all evidence.\n\nEven if he turns out to be right (she IS innocent), does he <em>know</em> she's innocent?",
+      extra: {
+        type: "highlight",
+        text: "Nagel's answer: No! Truth + confidence ≠ knowledge. Knowledge requires the RIGHT kind of connection to the truth. Confidence based on emotion rather than evidence doesn't cut it — even when the confident belief happens to be true. (This sets up Gettier perfectly!)"
       }
-      if (node.type === "final") {
-        const items = node.thinkers.map(t => "<li><strong>" + t.name + ":</strong> " + t.q + "</li>").join("");
-        return "<div class=\"final-box\"><div class=\"final-label\">" + node.label + "</div>" + bodyHtml(node.body) +
-          "<div class=\"final-question\"><h3>One question. No right answer. Put your devices down and talk.</h3><p>" + node.question + "</p></div></div>" +
-          "<div class=\"facilitator-box\"><h3>Connecting to the Six Thinkers and the Ministry Framework</h3><ul>" + items + "</ul></div>" +
-          "<button class=\"continue-btn gold\" data-continue-to=\"__restart__\">&#x21BA; &nbsp;Start over with a different path</button>";
+    },
+    {
+      type: "question",
+      question: "Which of these verbs is also FACTIVE, like 'know'?",
+      choices: [
+        { text: "'Hope' — as in 'She hoped it would rain'", correct: false },
+        { text: "'Realize' — as in 'She realized the answer was wrong'", correct: true },
+        { text: "'Say' — as in 'He said the meeting was at 3pm'", correct: false },
+        { text: "'Suspect' — as in 'He suspects she's guilty'", correct: false }
+      ],
+      feedback: {
+        correct: "✅ Right! 'Realize' is factive — you can only realize something true. You can't 'realize' a falsehood literally. Same with 'see that,' 'remember that,' and 'prove that.' 'Hope,' 'say,' and 'suspect' are all non-factive — you can hope, say, or suspect things that are completely false.",
+        wrong: "Only 'realize' is factive. You cannot 'realize' something false — realizing something entails that it's true. 'Hope,' 'say,' and 'suspect' are all non-factive: 'She hoped it would rain but it didn't' is perfectly coherent; 'She realized it would rain but it didn't' is a contradiction."
       }
-      return "";
+    },
+    {
+      type: "truefalse",
+      statement: "According to Nagel, Protagoras's view that truth is relative to each person (what's true for me might not be true for you) is a satisfying account of knowledge.",
+      answer: false,
+      feedback: {
+        correct: "✅ Correct — it's FALSE! Nagel describes Protagoras's relativism as 'hard to swallow, and perhaps even self-refuting.' If everything is true-for-someone, then no one ever makes a mistake — even the person who believes 2+2=5 can't be wrong. Nagel assumes truth is objective and the same for all of us.",
+        wrong: "Actually, this is FALSE. Nagel finds Protagoras's relativism problematic and potentially self-refuting. If truth is always relative to a subject, then no one ever makes a real mistake — which seems absurd. Nagel assumes truth is objective, meaning the same for everyone."
+      }
+    },
+    {
+      type: "question",
+      question: "Bill is very confident his door is locked, and it IS locked — but his confidence comes from a false memory. According to Nagel, does Bill KNOW his door is locked?",
+      choices: [
+        { text: "Yes — the belief is true and he's confident, so it counts as knowledge.", correct: false },
+        { text: "No — confidence based on the wrong reasons doesn't produce knowledge, even when the belief is true.", correct: true },
+        { text: "Yes — truth is the only thing knowledge requires beyond bare belief.", correct: false },
+        { text: "It depends on how confident he is.", correct: false }
+      ],
+      feedback: {
+        correct: "🌟 Spot on! Nagel's point is that knowledge has 'further requirements, beyond truth and confidence.' Being confident for the WRONG reasons — emotion, false memory, lucky guess — blocks genuine knowledge even when the belief turns out to be true. This is why the Gettier problem is so devastating!",
+        wrong: "Nagel is clear: knowledge needs more than truth and confidence. The father who is certain his daughter is innocent based purely on emotion doesn't know she's innocent, even if she is. Bill's false memory is similarly the wrong kind of basis for knowledge."
+      }
     }
+  ]
+},
 
-    function addToPath(label) {
-      pathHistory.push(label);
-      const tracker = document.getElementById("path-tracker");
-      tracker.innerHTML = "";
-      pathHistory.forEach((item, i) => {
-        if (i > 0) { const conn = document.createElement("div"); conn.className = "path-connector"; tracker.appendChild(conn); }
-        const el = document.createElement("div"); el.className = "path-item";
-        el.innerHTML = "<div class=\"path-dot\"></div><div class=\"path-text\">" + item + "</div>";
-        tracker.appendChild(el);
-        requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("visible")));
-      });
+// ──────────────────────────────────────────────────────────────────────────
+// CH 2 · RUSSELL · Appearance and Reality
+// ──────────────────────────────────────────────────────────────────────────
+{
+  id: 1, emoji: "🪑", color: "#f4845f",
+  tag: "Russell", title: "Appearance and Reality", author: "Bertrand Russell",
+  concepts: ["Sense-data", "Appearance vs. Reality", "Perceptual relativity", "Inference"],
+  intro: "Russell sits down at an ordinary brown table. Simple, right? But then he starts asking: what COLOR is it, really? What SHAPE? The more he looks, the stranger it gets. A plain piece of furniture turns into one of philosophy's greatest puzzles.",
+  scenes: [
+    {
+      type: "narrative",
+      narrator: { emoji: "🔍", name: "The Problem Begins" },
+      text: "Philosophy, Russell says, starts when we realize that things we took for granted are actually full of hidden contradictions. He wants to find knowledge so certain that <em>no reasonable person could doubt it</em>. Seems easy... but he starts with a table and immediately runs into trouble.",
+      extra: {
+        type: "highlight",
+        text: "Russell's mission: Find beliefs that are totally certain — starting from everyday experience. But everyday experience, it turns out, is much trickier than it looks!"
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "🎨", name: "The Color Problem" },
+      text: "The table looks brown. But when light hits it from the side, parts look white. From a different angle, darker. To a color-blind person, it looks different. In darkness, it has no color at all.\n\nWhich of these is the table's REAL color? Russell says there's no good answer. Every observer has an equally valid perception. No single view is privileged.",
+      extra: {
+        type: "concept",
+        title: "Russell's Reasoning",
+        body: "If no one perspective can be called the 'real' one, then the table — in itself — doesn't have any one definite color. Color isn't a property of the table alone; it depends on the table, the observer, and the lighting conditions all together."
+      }
+    },
+    {
+      type: "question",
+      question: "Russell says we cannot say the table has ONE true color. Why not?",
+      choices: [
+        { text: "Because color doesn't physically exist — it's all in our heads.", correct: false },
+        { text: "Because the color we perceive changes based on angle, lighting, and observer — no single perspective is more 'real' than another.", correct: true },
+        { text: "Because scientists have proven tables absorb all light.", correct: false },
+        { text: "Because 'brown' is too vague a word to describe anything precisely.", correct: false }
+      ],
+      feedback: {
+        correct: "🎨 Perfect! Russell's reasoning: everyone looking at the same table at the same time sees a different distribution of colors — because they're all in different positions. Calling one of those perspectives the 'real' color unfairly privileges that view over equally valid others. So in itself, the table has no single color.",
+        wrong: "Russell isn't denying the physical world — he's noticing that perceived color shifts constantly depending on viewpoint, lighting, and observer. Since no single perspective can be declared the 'real' one, the table has no intrinsic, mind-independent color."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "🔬", name: "The Shape and Texture Problem" },
+      text: "The shape problem is similar. You KNOW the table is rectangular — but from almost every angle, it looks like it has two acute angles and two obtuse angles. The 'real' rectangular shape is something you <em>infer</em> from experience, not something you directly see.\n\nAnd texture: the table looks smooth to the naked eye. Under a microscope, it's full of hills and valleys. Which is more real? We'd say the microscope, but a more powerful microscope would show yet more roughness...",
+      extra: {
+        type: "steps",
+        color: "#f4845f",
+        items: [
+          "Naked eye: table looks smooth and flat",
+          "Microscope: rough hills and valleys appear",
+          "More powerful microscope: even more complexity",
+          "Conclusion: No single view is 'the real texture' — it keeps changing with tools"
+        ]
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "📋", name: "Sense-Data: The Key Term" },
+      text: "Russell introduces an important technical term: <strong>sense-data</strong>. These are the immediate contents of experience — the specific brown you see, the smoothness you feel, the tap-sound you hear. Sense-data are what you're <em>directly aware of</em>.\n\nThe 'real table,' if it exists, is something <em>inferred</em> from sense-data — not directly perceived.",
+      extra: {
+        type: "pills",
+        items: [
+          { label: "Sense-Data (what you directly perceive)", value: "A specific shade of brown · A felt smoothness · A tapping sound · A rectangular appearance" },
+          { label: "The Real Table (inferred, not perceived)", value: "Whatever object exists 'behind' all these experiences — independent of any observer" }
+        ]
+      }
+    },
+    {
+      type: "question",
+      question: "You're drawing the table for an art class. You're supposed to draw what you ACTUALLY SEE — not what you know to be true. What does Russell say about this?",
+      choices: [
+        { text: "An artist and a philosopher want exactly the same thing from the table.", correct: false },
+        { text: "The painter wants to capture appearances; the philosopher wants reality. The painter must UNLEARN the habit of drawing the 'real' shape and learn to draw what they actually see.", correct: true },
+        { text: "Drawing proves that sense-data give us direct access to reality.", correct: false },
+        { text: "Art has nothing to do with epistemology.", correct: false }
+      ],
+      feedback: {
+        correct: "🖼️ Yes! Russell explicitly mentions the painter: to draw well, you must unlearn the assumption that things 'look like' they really are. A table drawn in correct perspective has acute/obtuse angles, not right angles. The painter deals in appearances. The philosopher wants what's behind appearances — reality.",
+        wrong: "Russell actually uses painting as a key example! The painter has to train themselves to see APPEARANCES, not inferred reality. A skilled artist draws the table as it looks (with perspective distortion), not as it 'really' is (rectangular). This is Russell's appearance/reality split in action."
+      }
+    },
+    {
+      type: "question",
+      question: "What does Russell mean by 'sense-data'?",
+      choices: [
+        { text: "Scientific data collected through careful experiments in a lab.", correct: false },
+        { text: "The real, mind-independent properties of physical objects.", correct: false },
+        { text: "The immediate contents of experience — specific colors, sounds, textures, and hardnesses that we're directly aware of.", correct: true },
+        { text: "Beliefs we form unconsciously about the external world.", correct: false }
+      ],
+      feedback: {
+        correct: "💡 Exactly! Sense-data are the raw feels of experience — this precise brown, that smooth texture, the sound of tapping. They're what you're directly aware of right now. Russell's problem: these sense-data depend on YOU and the conditions, not just the table — so they might not reveal what the table is 'in itself.'",
+        wrong: "Sense-data is Russell's term for the immediate, direct contents of experience: the exact color you see, the specific texture you feel. He distinguishes these from the 'real' table, which would be an external object causing your experiences — something you infer rather than perceive directly."
+      }
+    },
+    {
+      type: "truefalse",
+      statement: "According to Russell, we can be certain that a real table exists 'behind' our sense-data.",
+      answer: false,
+      feedback: {
+        correct: "✅ Correct — it's FALSE! Russell ends by raising two deep questions: (1) Is there a real table at all? (2) If so, what is it like? He doesn't just assume the table is there. Most philosophers believe something must exist to cause our sense-data, but Russell insists this is an inference, not a certainty — 'the one thing we know about it is that it is not what it seems.'",
+        wrong: "This is FALSE. Russell is very careful here. He raises as a genuine open question whether there is a real table at all behind our sense-data. Even if most philosophers think something external must exist, this is an inference — not a direct certainty. We can't even be sure what it's like."
+      }
+    },
+    {
+      type: "question",
+      question: "Russell says: 'The real table, if there is one, is not immediately known to us at all.' What does he mean?",
+      choices: [
+        { text: "The real table is unknowable because tables don't actually exist.", correct: false },
+        { text: "We can only perceive sense-data (appearances); the real table — if it exists — must be inferred from those appearances, not directly seen or touched.", correct: true },
+        { text: "The table is immediately known through touch even if not through sight.", correct: false },
+        { text: "Real knowledge requires a microscope to see the actual table.", correct: false }
+      ],
+      feedback: {
+        correct: "🌟 Perfect! This is Russell's core conclusion. We don't directly touch or see 'the table' — we touch smoothness and see brownness. These are sense-data. Whatever the table 'really is' must be something we infer as the cause behind all these experiences. Direct perception gives us appearances only; reality must be reasoned toward.",
+        wrong: "Russell's point: all we ever directly access is sense-data (the specific color, shape, feel, sound). The 'real table' — whatever external object causes these experiences — has to be inferred from the sense-data, not perceived directly. We never have unmediated contact with physical reality."
+      }
     }
-    function updateProgress(pct) { document.getElementById("progress-fill").style.width = pct + "%"; }
-    function restart() { pathHistory = []; document.getElementById("path-tracker").innerHTML = ""; render("atmosphere"); }
+  ]
+},
 
-    document.getElementById("restart-btn").addEventListener("click", restart);
-    render("atmosphere");
-  </script>
+// ──────────────────────────────────────────────────────────────────────────
+// CH 3 · DESCARTES · First Meditation
+// ──────────────────────────────────────────────────────────────────────────
+{
+  id: 2, emoji: "🔥", color: "#e8b84b",
+  tag: "Descartes", title: "The First Meditation", author: "René Descartes",
+  concepts: ["Methodological doubt", "Senses deceive", "Dream argument", "Evil demon"],
+  intro: "Descartes sits alone by his fire one evening and decides to do something drastic: tear down EVERYTHING he believes and start from scratch. Not because he thinks he's wrong about everything — but because he wants to find beliefs so solid that nothing could shake them. Let the demolition begin!",
+  scenes: [
+    {
+      type: "narrative",
+      narrator: { emoji: "🏗️", name: "The Method" },
+      text: "Descartes uses an architectural metaphor: if a building's foundations are shaky, the whole structure is unsafe. You can't fix it room by room — you have to tear it down and rebuild. He'll do the same with his beliefs.\n\nCrucially: he doesn't need to prove each belief is FALSE. He only needs to find <em>some reason to doubt</em> it. That's enough to set it aside.",
+      extra: {
+        type: "highlight",
+        text: "Descartes' rule: Any belief that can be doubted — even a little — gets thrown out. He's looking for beliefs that are absolutely certain. This method is called METHODOLOGICAL DOUBT (doubt as a tool, not a destination)."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "👁️", name: "Wave 1: The Senses Deceive" },
+      text: "Descartes' first target: beliefs based on the senses. His argument is simple — the senses have deceived him before (a distant tower looks small; a stick in water looks bent). And it's unwise to fully trust anything that has deceived you, even once.\n\nBut wait — surely he can trust obvious things? He can see his hands right now. Surely that's certain?",
+      extra: {
+        type: "concept",
+        title: "Limitation of Wave 1",
+        body: "Descartes admits: 'the senses sometimes deceive us about objects that are very small or distant, but surely not about obvious things like my own hands right in front of me.' So Wave 1 only defeats beliefs about distant or small things. He needs a stronger argument."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "😴", name: "Wave 2: The Dream Argument" },
+      text: "Here comes the bigger challenge. Descartes has had dreams that felt completely real — he was sure he was sitting by the fire in his dressing gown, when in fact he was asleep in bed.\n\nIf he was fooled before, how can he be sure he's not dreaming RIGHT NOW?",
+      extra: {
+        type: "steps",
+        color: "#e8b84b",
+        items: [
+          "In past dreams, Descartes felt sure he was awake (sitting by fire, holding paper...)",
+          "He was wrong — he was actually asleep",
+          "Right now he feels sure he's awake",
+          "But he felt equally sure IN those dreams",
+          "Conclusion: there's no reliable internal test to distinguish dreaming from waking!"
+        ]
+      }
+    },
+    {
+      type: "question",
+      question: "Descartes' goal in the First Meditation is to:",
+      choices: [
+        { text: "Prove that we know absolutely nothing and should give up on philosophy.", correct: false },
+        { text: "Show that the senses are always unreliable for everything.", correct: false },
+        { text: "Find reasons to doubt all his beliefs as a METHOD — to identify beliefs that survive even radical doubt.", correct: true },
+        { text: "Convince readers that dreams are more real than waking life.", correct: false }
+      ],
+      feedback: {
+        correct: "🎯 Precisely! Descartes uses doubt as a TOOL, not a conclusion. Like demolishing a building to rebuild on solid foundations, he wants to clear away uncertain beliefs so he can find what's truly certain. He never claims everything IS false — just that anything that CAN be doubted should be set aside.",
+        wrong: "Descartes is strategic about doubt. He's not saying we can't know anything — he's clearing away the uncertain to find what's certain. This methodological doubt (doubt as method) is different from skepticism (doubt as conclusion). The goal is firmer foundations, not giving up."
+      }
+    },
+    {
+      type: "question",
+      question: "Why does the dream argument create more doubt than the 'senses deceive' argument?",
+      choices: [
+        { text: "Because dreams are more vivid than real experience.", correct: false },
+        { text: "Because the senses only sometimes deceive, but dreams make ALL current sensory beliefs doubtful — even obvious ones like 'I have hands.'", correct: true },
+        { text: "Because Descartes was a very vivid dreamer personally.", correct: false },
+        { text: "Because it proves he is actually dreaming right now.", correct: false }
+      ],
+      feedback: {
+        correct: "😴 Exactly! Wave 1 only threatened beliefs about distant/small things. Wave 2 is much stronger: if Descartes can't tell dream from waking, then even his most obvious beliefs — 'I have hands, I am sitting by the fire' — could be dream content. The dream argument threatens ALL sensory knowledge at once.",
+        wrong: "The upgrade from Wave 1 to Wave 2 is crucial. Wave 1 only defeats unreliable perceptions (small, distant things). Wave 2 is nuclear: if there's no reliable way to tell you're awake, ALL current sensory experience is potentially dream content — even 'I have hands in front of me.'"
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "🔢", name: "Math Seems Safe... Or Does It?" },
+      text: "Even in a dream, 2+3=5. Even if your body is an illusion, triangles still have three sides. So math and logic seem to survive the dream argument.\n\nBut Descartes isn't done. He introduces the most terrifying doubt of all...",
+      extra: {
+        type: "highlight",
+        text: "Descartes asks: What if an all-powerful, evil demon devoted all its energy to deceiving me — making me believe 2+3=5 when it's actually 6? I would never know. This is the Evil Demon hypothesis — and it casts doubt on EVERYTHING, including mathematics."
+      }
+    },
+    {
+      type: "question",
+      question: "Descartes concedes that math seems to survive the dream argument. What new skeptical tool does he introduce to doubt even that?",
+      choices: [
+        { text: "The theory of sense-data — showing that numbers are just perceptual", correct: false },
+        { text: "An all-powerful evil demon who could deceive him about everything, including 2+3=5.", correct: true },
+        { text: "The possibility that other people don't actually exist.", correct: false },
+        { text: "The argument that memory always distorts what we've learned.", correct: false }
+      ],
+      feedback: {
+        correct: "👹 Correct! The evil demon is Descartes' most extreme skeptical tool. If a supremely powerful deceiver wanted to make 2+3 seem like 5 when it was really 6, could he detect it? No — his very faculty of reason might be corrupted. The evil demon casts doubt on ALL beliefs, even the most seemingly obvious.",
+        wrong: "The evil demon is Descartes' nuclear option. Even after the dream argument, math seemed safe. But an omnipotent deceiver could corrupt his very capacity to reason — making 2+3=5 feel certain even if it's false. Nothing survives this hypothetical."
+      }
+    },
+    {
+      type: "truefalse",
+      statement: "Descartes' three waves of doubt are meant to PROVE that we know nothing at all.",
+      answer: false,
+      feedback: {
+        correct: "✅ Correct — FALSE! Descartes is using doubt as a METHOD to find what CANNOT be doubted. In later meditations, he famously finds that even the evil demon can't fool him about one thing: the fact that he's thinking (and therefore exists). 'I think, therefore I am' (cogito ergo sum) survives all three waves. Doubt is the tool, not the conclusion.",
+        wrong: "FALSE! This is a common misreading. Descartes uses doubt strategically — as a method to strip away uncertain beliefs so he can find truly solid foundations. In later meditations, he finds beliefs that survive even the evil demon (the cogito: 'I think, therefore I am'). He's rebuilding, not destroying."
+      }
+    }
+  ]
+},
+
+// ──────────────────────────────────────────────────────────────────────────
+// CH 4 · GETTIER · Is Justified True Belief Knowledge?
+// ──────────────────────────────────────────────────────────────────────────
+{
+  id: 3, emoji: "💼", color: "#a8c66c",
+  tag: "Gettier", title: "Is Justified True Belief Knowledge?", author: "Edmund L. Gettier",
+  concepts: ["JTB definition", "Necessary vs. Sufficient", "Gettier counterexample", "Lucky true belief"],
+  intro: "For centuries, philosophers agreed: knowledge = Justified True Belief (JTB). In 1963, Edmund Gettier published a tiny 3-page paper that exploded this definition with a single clever story. Let's meet Smith, Jones, and some very inconvenient pocket coins.",
+  scenes: [
+    {
+      type: "narrative",
+      narrator: { emoji: "📚", name: "The Traditional Definition" },
+      text: "Before Gettier, philosophers generally agreed that you know something (P) if and only if:\n\n① P is <strong>true</strong>\n② You <strong>believe</strong> P\n③ You're <strong>justified</strong> in believing P\n\nThis is called the <strong>Justified True Belief (JTB)</strong> account of knowledge.",
+      extra: {
+        type: "steps",
+        color: "#a8c66c",
+        items: [
+          "TRUE: The thing you believe must actually be the case",
+          "BELIEVED: You must actually hold the belief",
+          "JUSTIFIED: You must have good reasons — evidence, reliable sources, careful reasoning"
+        ]
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "⚖️", name: "Necessary vs. Sufficient — A Quick Primer" },
+      text: "Before we get to Gettier's argument, we need to understand two logical terms:\n\n<strong>Necessary condition:</strong> something you <em>must</em> have (but having it alone might not be enough)\n<strong>Sufficient condition:</strong> something that <em>guarantees</em> the outcome (if you have it, you're done)\n\nGettier's question: Is JTB <em>sufficient</em> for knowledge?",
+      extra: {
+        type: "concept",
+        title: "Example",
+        body: "Being a mammal is NECESSARY for being a dog (all dogs are mammals). But it's not SUFFICIENT — lots of mammals aren't dogs. Gettier argues that JTB is NECESSARY for knowledge (you need all three), but it's not SUFFICIENT — you can have all three and still not have knowledge."
+      }
+    },
+    {
+      type: "question",
+      question: "What does it mean to say JTB is 'necessary but not sufficient' for knowledge?",
+      choices: [
+        { text: "JTB is enough on its own to guarantee knowledge.", correct: false },
+        { text: "JTB isn't needed for knowledge — you can know things without being justified.", correct: false },
+        { text: "JTB is always required for knowledge, but having JTB doesn't guarantee you have knowledge — something extra is needed.", correct: true },
+        { text: "Justified belief is necessary; true belief is not.", correct: false }
+      ],
+      feedback: {
+        correct: "⚖️ Exactly! Necessary means you CAN'T have knowledge without it (truth, belief, and justification are all required). But not sufficient means having all three doesn't GUARANTEE knowledge — there can be JTB cases that aren't knowledge. That's Gettier's claim.",
+        wrong: "Think of it this way: oxygen is necessary for fire, but oxygen alone doesn't start a fire (you also need fuel and heat). Similarly, Gettier argues JTB conditions are all required (necessary), but having all three doesn't guarantee knowledge — something can go wrong even when all three are present."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "🪙", name: "The Scenario: Step by Step" },
+      text: "Smith and Jones both applied for a job. Smith has strong evidence for two things:\n\n(d) Jones will get the job AND Jones has 10 coins in his pocket.\n\nSo Smith concludes:\n\n(e) The person who gets the job has 10 coins in their pocket.\n\nSmith's evidence: the company president personally told him Jones would be hired, AND Smith counted the coins in Jones's pocket himself. Pretty solid justification!",
+      extra: {
+        type: "concept",
+        title: "The Twist",
+        body: "But UNKNOWN to Smith — Smith himself gets the job! AND Smith has 10 coins in his own pocket (he didn't know this either). So (e) is TRUE — the job-getter (Smith) has 10 coins. Smith BELIEVED (e). Smith was JUSTIFIED in believing (e).\n\nGettier's question: Does Smith KNOW (e)?"
+      }
+    },
+    {
+      type: "question",
+      question: "Why does Gettier say Smith does NOT know that 'the person who gets the job has 10 coins in their pocket'?",
+      choices: [
+        { text: "Because Smith's belief is false.", correct: false },
+        { text: "Because Smith isn't justified — his evidence about Jones was weak.", correct: false },
+        { text: "Because Smith's belief is true FOR THE WRONG REASONS — it's true because of Smith's own coins, but Smith's reasoning was entirely about Jones's coins. The truth arrived by accident.", correct: true },
+        { text: "Because the company president lied to Smith.", correct: false }
+      ],
+      feedback: {
+        correct: "🎰 That's the Gettier insight! Smith has JTB — the belief is true, believed, and justified. But the belief is true by COINCIDENCE, not because Smith's reasoning tracked the actual truth. He was reasoning about Jones (who isn't getting the job), and happened to be right for a completely different reason. Lucky ≠ knowledge.",
+        wrong: "Smith's belief IS justified (strong evidence from the president). It IS believed. It IS true. All three JTB conditions are met! Gettier's point is subtler: the belief is true by ACCIDENT. Smith's justification pointed at Jones, but the truth is about Smith's own coins. The reasoning missed the actual truth-maker."
+      }
+    },
+    {
+      type: "question",
+      question: "You look at a stopped clock. It reads 3:15. You believe it's 3:15. It IS 3:15 (you looked at exactly the right moment by chance). Is this a Gettier-style case?",
+      choices: [
+        { text: "No — you used a reliable source (clocks), so this counts as knowledge.", correct: false },
+        { text: "Yes — you have JTB, but the belief is true only by coincidence since the clock is stopped. Your justification 'clocks are reliable' doesn't actually connect to the truth here.", correct: true },
+        { text: "No — Gettier cases only involve coins and job applications.", correct: false },
+        { text: "It depends on whether you've checked the time recently.", correct: false }
+      ],
+      feedback: {
+        correct: "⏰ Yes! This is the classic 'stopped clock' Gettier variant. Your justification (clocks are normally reliable) is real. The belief is true (it is 3:15). You do believe it. But the clock isn't WORKING — you got lucky. The truth of your belief has nothing to do with your justification working properly. Classic Gettier!",
+        wrong: "This IS a Gettier case! The clock is stopped, so your justification (this clock tells the time) isn't actually producing the true belief — you just happened to look at the exact right second. The belief is justified and true and believed, but the connection between your reason and the truth is broken."
+      }
+    },
+    {
+      type: "truefalse",
+      statement: "Gettier's paper proves that justification is NOT necessary for knowledge — we can know things without being justified.",
+      answer: false,
+      feedback: {
+        correct: "✅ Correct — FALSE! Gettier isn't attacking justification itself. He's showing JTB is not SUFFICIENT for knowledge. Justification is still a necessary ingredient — you still need good reasons for your belief. The problem is that having all three conditions (J + T + B) together can still fail to produce knowledge when the truth is accidental.",
+        wrong: "FALSE! Gettier is attacking the SUFFICIENCY of JTB, not the necessity of justification. He's not saying justification doesn't matter — he's saying that even when you HAVE justification (along with truth and belief), you can still fail to have knowledge. Something more is needed."
+      }
+    }
+  ]
+},
+
+// ──────────────────────────────────────────────────────────────────────────
+// CH 5 · NOZICK · Conditions for Knowledge
+// ──────────────────────────────────────────────────────────────────────────
+{
+  id: 4, emoji: "🔗", color: "#c87dd4",
+  tag: "Nozick", title: "Conditions for Knowledge", author: "Robert Nozick",
+  concepts: ["Tracking theory", "Sensitivity (Condition 3)", "Adherence (Condition 4)", "Subjunctive conditionals"],
+  intro: "Gettier showed that JTB isn't enough. But what IS enough? Nozick's answer: your belief has to actually TRACK the truth — like a good thermometer that rises when it's hot and falls when it's cold. Let's build this theory from the ground up.",
+  scenes: [
+    {
+      type: "narrative",
+      narrator: { emoji: "🌡️", name: "The Tracking Metaphor" },
+      text: "Nozick wants to know: what does it mean for a belief to be properly CONNECTED to reality? His answer: it must <em>track</em> the truth — vary with it, be sensitive to it.\n\nThink of a good thermometer. It registers high when it's hot, low when it's cold. It co-varies with temperature. Your beliefs about the world should co-vary with how the world actually is.",
+      extra: {
+        type: "concept",
+        title: "The Tracking Idea",
+        body: "Nozick says: to KNOW P is to have a belief that 'tracks' the truth of P. This means your belief shouldn't just happen to be true — it should be the kind of belief that would go away if P became false, and would still be present if P remained true."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "❓", name: "Condition 3: Sensitivity" },
+      text: "Here's Nozick's crucial addition to the standard conditions:\n\n<strong>Condition 3 (Sensitivity):</strong> If P weren't true, S would NOT believe P.\n\nThis is called a <em>subjunctive conditional</em> — it asks: in a nearby possible world where P is false, would you still believe P? If yes, your belief is insensitive to the truth.",
+      extra: {
+        type: "steps",
+        color: "#c87dd4",
+        items: [
+          "Ask: 'Suppose P were false — what would happen to the belief?'",
+          "If the belief would DISAPPEAR → the belief is SENSITIVE to the truth ✅",
+          "If the belief would STAY → the belief is INSENSITIVE → not knowledge ❌",
+          "Example: If it weren't 3pm, would you still believe it was 3pm? (Stopped clock: YES → not knowledge)"
+        ]
+      }
+    },
+    {
+      type: "question",
+      question: "Apply Nozick's sensitivity condition to Gettier's coin case. Why does Smith fail?",
+      choices: [
+        { text: "Because Smith doesn't actually believe the claim about coins.", correct: false },
+        { text: "Because if it were false that the job-getter had 10 coins, Smith would STILL believe it — his belief is locked to Jones, not to the actual situation.", correct: true },
+        { text: "Because sensitivity only applies to mathematical beliefs.", correct: false },
+        { text: "Because Smith was too hasty in drawing his conclusion.", correct: false }
+      ],
+      feedback: {
+        correct: "🔍 Exactly! Condition 3 asks: if it were false that the job-getter has 10 coins, would Smith stop believing it? No! Smith's reasoning was about Jones, so even if the coin count were different, Smith would still believe the same thing. The belief doesn't TRACK the truth — it's disconnected from the actual fact-maker.",
+        wrong: "Nozick's test: imagine the belief were false (no 10 coins in the job-getter's pocket). Would Smith change his belief? No — he'd still believe it based on Jones. His belief doesn't flex with reality. That insensitivity is exactly what disqualifies it as knowledge."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "🛁", name: "The Tank Case — A Tricky Edge Case" },
+      text: "A person is floating in a sensory deprivation tank. Scientists beam a signal directly into his brain that makes him believe 'I am in a tank.' He IS in a tank.\n\nDoes he satisfy condition 3? Let's check: if he WEREN'T in a tank, would he still believe he was? Actually... no! The scientists would have changed the signal. So condition 3 is satisfied.\n\nBut Nozick says he still doesn't know. Why not?",
+      extra: {
+        type: "highlight",
+        text: "The problem: the scientists could have beamed ANY belief — true or false. His belief happened to match reality by accident of the scientists' choice, not by any reliable connection to reality. Nozick says this shows we need a 4th condition."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "📡", name: "Condition 4: Adherence" },
+      text: "Condition 3 asks about the false direction: if P were false, would you stop believing?\n\n<strong>Condition 4 (Adherence):</strong> If P were true, S WOULD believe P.\n\nThis is the positive side. Your belief should <em>track</em> the truth in BOTH directions — disappearing when P is false, remaining when P is true.",
+      extra: {
+        type: "pills",
+        items: [
+          { label: "Condition 3 (Sensitivity)", value: "If P were FALSE → S would NOT believe P. (Belief tracks falsity)" },
+          { label: "Condition 4 (Adherence)", value: "If P were TRUE → S WOULD believe P. (Belief tracks truth)" }
+        ]
+      }
+    },
+    {
+      type: "question",
+      question: "A person is in the tank and believes 'I am in a tank' — which the scientists caused. Why does Nozick say they fail condition 4?",
+      choices: [
+        { text: "Because their belief is false — they're not really in a tank.", correct: false },
+        { text: "Because the scientists could have produced ANY belief; the person's belief doesn't reliably track reality — it just happens to match what the scientists chose.", correct: true },
+        { text: "Because tanks are too unusual to be a knowledge domain.", correct: false },
+        { text: "Because brains in tanks can't form beliefs at all.", correct: false }
+      ],
+      feedback: {
+        correct: "🛁 Right! Even though condition 3 is technically met, the person's belief doesn't genuinely co-vary with reality. The scientists are in control — they could have induced a false belief just as easily. This is NOT the same as a sensitive belief that tracks truth. Conditions 3 AND 4 together are needed.",
+        wrong: "The tank person has a true belief. But Nozick's tracking theory requires that the belief be genuinely connected to reality — not just coincidentally correct. Because the scientists could have produced any belief, the person's 'true' belief is the result of their choice, not a real connection to the fact."
+      }
+    },
+    {
+      type: "question",
+      question: "Nozick says 'to know P is to have a belief that tracks the truth.' What does 'tracking' mean in his account?",
+      choices: [
+        { text: "The belief was formed by a process society considers reliable.", correct: false },
+        { text: "The belief is very strongly held and resistant to change.", correct: false },
+        { text: "The belief co-varies with reality: it would disappear if P became false (sensitivity) and would remain if P stayed true (adherence).", correct: true },
+        { text: "The believer actively checked multiple sources before forming the belief.", correct: false }
+      ],
+      feedback: {
+        correct: "✨ Perfect! Tracking means the belief and the fact vary together, in both directions. A good thermometer tracks temperature — it goes up when it's hot, down when it's cold. Knowledge requires the same thing: your belief goes away when the truth goes away (condition 3) and sticks around when the truth sticks around (condition 4).",
+        wrong: "Tracking, for Nozick, is about co-variation in BOTH directions. Condition 3: if the truth disappeared, the belief would too. Condition 4: if the truth stayed, the belief would stay. Together, this means the belief and the fact move together reliably — not by accident."
+      }
+    },
+    {
+      type: "truefalse",
+      statement: "Nozick's tracking conditions replace the original three conditions (True, Believed, Justified) entirely.",
+      answer: false,
+      feedback: {
+        correct: "✅ Correct — FALSE! Nozick ADDS conditions 3 and 4 alongside the original (1) P is true and (2) S believes P. He doesn't throw out truth and belief — those remain necessary. He's proposing a 5-condition theory (though he actually replaces 'justified' with his two tracking conditions, arguing they capture what justification was trying to get at more precisely).",
+        wrong: "FALSE! Nozick keeps conditions 1 (P is true) and 2 (S believes P) — those remain necessary. He adds conditions 3 and 4 (the tracking conditions) to replace the traditional 'justified' condition, arguing they capture the right idea more precisely. Knowledge requires all four conditions together."
+      }
+    }
+  ]
+},
+
+// ──────────────────────────────────────────────────────────────────────────
+// CH 6 · ZAGZEBSKI · Caring and Epistemic Demands
+// ──────────────────────────────────────────────────────────────────────────
+{
+  id: 5, emoji: "❤️", color: "#e05f75",
+  tag: "Zagzebski", title: "Caring and Epistemic Demands", author: "Linda Zagzebski",
+  concepts: ["Conscientious belief", "Epistemic obligations", "Caring & believing linked", "Gold vs. Fool's Gold"],
+  intro: "All the other philosophers asked HOW we know things. Zagzebski asks something different: WHY should we even care about knowing true things rather than comfortable ones? Her surprising answer: because caring about ANYTHING commits you to caring about truth. It's not optional.",
+  scenes: [
+    {
+      type: "narrative",
+      narrator: { emoji: "💖", name: "The Big Claim" },
+      text: "Zagzebski's central argument is elegant: if you genuinely care about something, you MUST care about having true beliefs about it. This isn't a moral demand from outside — it's built into what caring means.\n\nIf you claim to care about your friend but are completely happy holding false beliefs about their life... that itself shows you don't care as much as you think you do.",
+      extra: {
+        type: "concept",
+        title: "Conscientious Belief",
+        body: "Zagzebski calls a belief governed by a concern for truth a 'conscientiously held belief.' Caring demands conscientiousness. The more you care, the more conscientious you must be. These demands come in degrees — caring a little demands a little; caring deeply demands a lot."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "📷", name: "The Photojournalist Example" },
+      text: "Think about a hurricane with 10,000 victims. You care about their wellbeing in a general way. But you can't form individual beliefs about 10,000 people — there are just too many.\n\nZagzebski's insight: because you can only form beliefs about them AS A CLASS, you can only care about them as a class — not as individuals. This is why photojournalists put a face on disasters.",
+      extra: {
+        type: "highlight",
+        text: "Putting a face on disaster aids individual caring: once you know someone's name and see their face, you can form individual beliefs — and from there, individual caring follows. Belief-formation ENABLES caring. This works in reverse too: if your beliefs collapse, so does your caring."
+      }
+    },
+    {
+      type: "question",
+      question: "According to Zagzebski, if you genuinely care about your little sibling's wellbeing, what follows logically?",
+      choices: [
+        { text: "You should form beliefs about them based on what makes you feel good.", correct: false },
+        { text: "You are rationally committed to caring about having TRUE beliefs about your sibling — not convenient or flattering ones.", correct: true },
+        { text: "You should avoid forming beliefs about them to preserve their privacy.", correct: false },
+        { text: "You should only believe what your sibling tells you directly.", correct: false }
+      ],
+      feedback: {
+        correct: "❤️ Yes! Zagzebski's logic: caring about X rationally commits you to caring about truth in the domain of X. If you claim to care about your sibling but are okay holding false beliefs about their life (maybe you think they're fine when they're actually struggling), that shows your caring is deficient. Real caring demands truth-seeking.",
+        wrong: "The logic Zagzebski draws: if you care about X, you want your ACTIONS toward X to actually help X. But you can only act well if you have TRUE beliefs about X. Convenient, flattering, or comfortable false beliefs will lead you to act in ways that don't actually serve what you care about."
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "⚒️", name: "The Two Demands of Caring" },
+      text: "Zagzebski says caring imposes TWO epistemic demands, not just one:",
+      extra: {
+        type: "steps",
+        color: "#e05f75",
+        items: [
+          "DEMAND 1 (stronger): Be conscientious about whatever beliefs you ALREADY HAVE in that domain — don't hold sloppy or lazy beliefs",
+          "DEMAND 2: Actively GO OUT AND GET beliefs in that domain — don't stay willfully ignorant about things you claim to care about"
+        ]
+      }
+    },
+    {
+      type: "narrative",
+      narrator: { emoji: "⛏️", name: "Gold vs. Fool's Gold" },
+      text: "Here's Zagzebski's most memorable analogy. Imagine you're mining for gold. You find lots of nuggets — but some are real gold, some are Fool's Gold (looks identical). You can't always tell which is which.\n\nEven if you have SOME real gold, it's not very useful if it's all mixed up with Fool's Gold you can't identify.",
+      extra: {
+        type: "quote",
+        text: "We not only want true beliefs, but we want to distinguish the true beliefs from the false ones. It diminishes the value of our true beliefs if they are mixed up with too many false beliefs.",
+        attribution: "— Linda Zagzebski"
+      }
+    },
+    {
+      type: "question",
+      question: "What is the point of Zagzebski's 'gold vs. Fool's Gold' analogy?",
+      choices: [
+        { text: "That true beliefs are rare and hard to find, like gold.", correct: false },
+        { text: "That we don't just want true beliefs — we also need to be able to IDENTIFY which beliefs are true and which are false. Mixed-up truth is not very useful.", correct: true },
+        { text: "That the pursuit of truth is valuable even if you never find it.", correct: false },
+        { text: "That false beliefs look just like true beliefs to everyone.", correct: false }
+      ],
+      feedback: {
+        correct: "⛏️ Perfect! Even if you have some real gold (true beliefs), having them mixed with Fool's Gold (false beliefs you can't identify) undermines their value. You can't act confidently on beliefs you can't distinguish as true. We need not just true beliefs but RELIABLE METHODS to sort them from false ones.",
+        wrong: "The analogy is about the VALUE of true beliefs when mixed with undetected false ones. If you can't tell your true beliefs from your false ones, the true ones become nearly useless — like genuine gold mixed with indistinguishable Fool's Gold. We need epistemic tools to sort truth from falsehood."
+      }
+    },
+    {
+      type: "question",
+      question: "Zagzebski says sometimes it can be WRONG to seek more information about things you care about. When?",
+      choices: [
+        { text: "When the information would make you too emotional to act rationally.", correct: false },
+        { text: "When seeking those beliefs conflicts with something ELSE you care about — like a friend's privacy, or when excessive health information makes you more anxious and actually worse off.", correct: true },
+        { text: "When you haven't taken enough philosophy courses yet.", correct: false },
+        { text: "When the information comes from an unreliable source.", correct: false }
+      ],
+      feedback: {
+        correct: "🔒 Great! Zagzebski acknowledges real exceptions. If you care about your friend's wellbeing BUT ALSO their privacy, those demands can conflict — and you shouldn't pry. She also notes that obsessively seeking health information can actually harm your health. Epistemic demands arise from caring, and so do their limits.",
+        wrong: "Zagzebski's qualification is important: the duty to form beliefs comes from caring, but so do its limits. Caring about a friend's PRIVACY limits how much you should investigate their personal life. Caring about your own health might be undermined by obsessive health-tracking. Competing values create competing epistemic demands."
+      }
+    },
+    {
+      type: "truefalse",
+      statement: "Zagzebski argues that epistemic (knowledge-related) demands are completely separate from practical life — caring about things is about values, not truth.",
+      answer: false,
+      feedback: {
+        correct: "✅ Correct — FALSE! Zagzebski's entire point is that epistemic demands are EMBEDDED in caring — in everyday life, values, and relationships. You can't properly care about your children, your work, or your community without caring about having true beliefs about them. Epistemology isn't separate from life; it's woven into it.",
+        wrong: "FALSE! This is the opposite of Zagzebski's thesis. She argues that epistemic obligations (caring about true beliefs) are GROUNDED IN and INSEPARABLE FROM our practical caring. Because we care about things, we must care about truth. Epistemology isn't a separate academic concern — it grows out of everything we care about."
+      }
+    },
+    {
+      type: "question",
+      question: "Zagzebski says we need not just true beliefs, but CONFIDENCE that specific beliefs we're acting on are true. Why?",
+      choices: [
+        { text: "Because confident people are more persuasive when sharing their beliefs.", correct: false },
+        { text: "Because acting on beliefs involves time, effort, and sometimes risk — it's only rational to act when you have enough confidence to make the action worthwhile.", correct: true },
+        { text: "Because confidence is the same thing as justification.", correct: false },
+        { text: "Because uncertain beliefs can never be acted upon.", correct: false }
+      ],
+      feedback: {
+        correct: "🎯 Right! Zagzebski connects belief to action: when we care about something, we become agents — we act. Actions have costs (time, effort, risk). It's only rational to pay those costs if you have sufficient confidence that the beliefs you're acting on are true. Mere true belief isn't enough — you need to KNOW you have it.",
+        wrong: "Zagzebski's point about action is key. We don't just form beliefs passively — we act on them, and actions have costs. You wouldn't risk important resources on a belief you're not confident in. So caring about action in a domain we care about means caring about CONFIDENT, well-founded beliefs, not just lucky ones."
+      }
+    }
+  ]
+}
+
+];
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// STATE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let state = {
+  screen: "intro",
+  chapterIdx: 0,
+  sceneIdx: 0,
+  score: 0,
+  chapterScores: {},
+  answered: false
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DOM
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const card = document.getElementById("main-card");
+const scoreDisplay = document.getElementById("score-display");
+const scoreBadge = document.getElementById("score-badge");
+const progressTrack = document.getElementById("progress-track");
+const chapterCounter = document.getElementById("chapter-counter");
+
+function addPoints(pts) {
+  state.score += pts;
+  state.chapterScores[state.chapterIdx] = (state.chapterScores[state.chapterIdx] || 0) + pts;
+  scoreDisplay.textContent = state.score;
+  scoreBadge.classList.remove("pop");
+  void scoreBadge.offsetWidth;
+  scoreBadge.classList.add("pop");
+}
+
+function buildProgress() {
+  progressTrack.innerHTML = "";
+  CHAPTERS.forEach((ch, i) => {
+    const dot = document.createElement("div");
+    dot.className = "chapter-dot";
+    if (i < state.chapterIdx) dot.classList.add("done");
+    if (i === state.chapterIdx && (state.screen === "scene" || state.screen === "chapterIntro")) dot.classList.add("active");
+    const tip = document.createElement("div");
+    tip.className = "dot-tip";
+    tip.textContent = ch.emoji + " " + ch.tag;
+    dot.appendChild(tip);
+    progressTrack.appendChild(dot);
+  });
+  if (state.screen === "scene" || state.screen === "chapterIntro") {
+    const ch = CHAPTERS[state.chapterIdx];
+    chapterCounter.textContent = `Chapter ${state.chapterIdx + 1} of ${CHAPTERS.length}: ${ch.title}`;
+  } else {
+    chapterCounter.textContent = `${CHAPTERS.length} Chapters · ${CHAPTERS.reduce((s,c)=>s+c.scenes.filter(sc=>sc.type==='question'||sc.type==='truefalse').length,0)} Questions`;
+  }
+}
+
+function render() {
+  buildProgress();
+  card.innerHTML = "";
+  card.style.animation = "none";
+  void card.offsetWidth;
+  card.style.animation = "";
+  if (state.screen === "intro") renderIntro();
+  else if (state.screen === "chapterIntro") renderChapterIntro();
+  else if (state.screen === "scene") renderScene();
+  else if (state.screen === "result") renderResult();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// EXTRA CONTENT RENDERERS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderExtra(extra, chColor) {
+  if (!extra) return "";
+  switch(extra.type) {
+    case "highlight":
+      return `<div class="highlight-box">${extra.text}</div>`;
+    case "concept":
+      return `<div class="concept-box"><div class="concept-title">${extra.title}</div><div class="concept-body">${extra.body}</div></div>`;
+    case "pills":
+      return `<div class="concept-row">${extra.items.map(p=>`<div class="concept-pill"><div class="pill-label">${p.label}</div><div class="pill-value">${p.value}</div></div>`).join("")}</div>`;
+    case "quote":
+      return `<div class="quote-box">${extra.text}<div class="quote-attribution">${extra.attribution}</div></div>`;
+    case "steps":
+      return `<div class="step-sequence">${extra.items.map((s,i)=>`<div class="step-item"><div class="step-num" style="background:${chColor}">${i+1}</div><div class="step-text">${s}</div></div>`).join("")}</div>`;
+    case "compare":
+      return `<div style="overflow-x:auto;margin:14px 0"><table class="compare-table"><thead><tr>${extra.headers.map(h=>`<th style="background:rgba(0,0,0,0.04)">${h}</th>`).join("")}</tr></thead><tbody>${extra.rows.map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+    default: return "";
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SCREENS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderIntro() {
+  const totalQ = CHAPTERS.reduce((s,c)=>s+c.scenes.filter(sc=>sc.type==='question'||sc.type==='truefalse').length,0);
+  card.innerHTML = `
+    <div class="center-screen">
+      <span class="big-emoji">🧠</span>
+      <h2>Welcome to Episteme Quest!</h2>
+      <p>Six chapters. Six thinkers. One big question: <strong>What is knowledge?</strong> Work through each chapter's story, learn the key ideas with scaffolding, then prove you've got it with ${totalQ} questions.</p>
+      <ul class="toc-list">
+        ${CHAPTERS.map(ch=>`<li><span style="font-size:1.3rem">${ch.emoji}</span><div><strong>${ch.title}</strong><br><span style="font-weight:600;color:var(--muted);font-size:0.8rem">${ch.author}</span></div></li>`).join("")}
+      </ul>
+      <button class="start-btn" onclick="startGame()">Start Quest 🚀</button>
+    </div>`;
+}
+
+function startGame() {
+  state = { screen: "chapterIntro", chapterIdx: 0, sceneIdx: 0, score: 0, chapterScores: {}, answered: false };
+  scoreDisplay.textContent = "0";
+  render();
+}
+
+function renderChapterIntro() {
+  const ch = CHAPTERS[state.chapterIdx];
+  const qCount = ch.scenes.filter(s=>s.type==='question'||s.type==='truefalse').length;
+  card.innerHTML = `
+    <div class="chapter-intro-card">
+      <span class="ch-emoji">${ch.emoji}</span>
+      <div style="display:inline-block;background:${ch.color};color:white;padding:3px 14px;border-radius:50px;font-size:0.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Chapter ${ch.id+1} of ${CHAPTERS.length}</div>
+      <h2>${ch.title}</h2>
+      <div class="author">by ${ch.author}</div>
+      <p>${ch.intro}</p>
+      <div class="key-concepts">${ch.concepts.map(c=>`<span class="key-concept-tag">🏷️ ${c}</span>`).join("")}</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px">${ch.scenes.filter(s=>s.type==='narrative').length} readings · ${qCount} questions · up to ${qCount*10} points</p>
+      <button class="next-btn" style="background:${ch.color}" onclick="startChapter()">Begin Chapter →</button>
+    </div>`;
+}
+
+function startChapter() {
+  state.sceneIdx = 0;
+  state.screen = "scene";
+  render();
+}
+
+function renderScene() {
+  const ch = CHAPTERS[state.chapterIdx];
+  const scene = ch.scenes[state.sceneIdx];
+  state.answered = false;
+
+  const sceneNum = state.sceneIdx + 1;
+  const totalScenes = ch.scenes.length;
+  const progressLabel = `Scene ${sceneNum} of ${totalScenes}`;
+
+  let html = `<div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div class="chapter-tag" style="background:${ch.color};margin-bottom:0">${ch.emoji} ${ch.tag}</div>
+      <span style="font-size:0.72rem;font-weight:800;color:var(--muted)">${progressLabel}</span>
+    </div>`;
+
+  if (scene.type === "narrative") {
+    const paras = scene.text.split('\n').filter(l => l.trim());
+    html += `
+      <div class="narrator-box">
+        <div class="narrator-avatar">${scene.narrator.emoji}</div>
+        <div>
+          <div class="narrator-name">${scene.narrator.name}</div>
+          <div class="narrator-text">${paras.join('<br><br>')}</div>
+        </div>
+      </div>
+      ${renderExtra(scene.extra, ch.color)}
+      <button class="next-btn" style="background:${ch.color}" onclick="advanceScene()">Got it — continue →</button>`;
+
+  } else if (scene.type === "question") {
+    const letters = ["A","B","C","D"];
+    html += `
+      <div class="question-text">❓ ${scene.question}</div>
+      <div class="choices" id="choices-container">
+        ${scene.choices.map((c,i)=>`
+          <button class="choice-btn" onclick="handleAnswer(this,${c.correct})">
+            <span class="choice-letter">${letters[i]}</span><span>${c.text}</span>
+          </button>`).join("")}
+      </div>
+      <div id="feedback-area"></div>`;
+
+  } else if (scene.type === "truefalse") {
+    html += `
+      <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px">TRUE OR FALSE?</div>
+      <div class="question-text" style="font-size:1.05rem;font-family:'Nunito',sans-serif;font-weight:700;line-height:1.6">"${scene.statement}"</div>
+      <div class="tf-container">
+        <button class="tf-btn" onclick="handleTF(this, true, ${scene.answer})">✅ True</button>
+        <button class="tf-btn" onclick="handleTF(this, false, ${scene.answer})">❌ False</button>
+      </div>
+      <div id="feedback-area"></div>`;
+  }
+
+  html += "</div>";
+  card.innerHTML = html;
+}
+
+function handleAnswer(btn, isCorrect) {
+  if (state.answered) return;
+  state.answered = true;
+  const ch = CHAPTERS[state.chapterIdx];
+  const scene = ch.scenes[state.sceneIdx];
+  const allBtns = document.querySelectorAll(".choice-btn");
+  allBtns.forEach(b => b.disabled = true);
+  btn.classList.add(isCorrect ? "correct" : "wrong");
+  if (!isCorrect) {
+    allBtns.forEach((b,i) => { if (scene.choices[i].correct) b.classList.add("correct"); });
+  }
+  if (isCorrect) addPoints(10);
+  showFeedback(scene.feedback, isCorrect, ch.color);
+}
+
+function handleTF(btn, selected, correctAnswer) {
+  if (state.answered) return;
+  state.answered = true;
+  const ch = CHAPTERS[state.chapterIdx];
+  const scene = ch.scenes[state.sceneIdx];
+  const allBtns = document.querySelectorAll(".tf-btn");
+  allBtns.forEach(b => b.disabled = true);
+  const isCorrect = (selected === correctAnswer);
+  btn.classList.add(isCorrect ? "correct" : "wrong");
+  if (!isCorrect) {
+    allBtns.forEach(b => { if ((b.textContent.includes("True") && correctAnswer===true)||(b.textContent.includes("False") && correctAnswer===false)) b.classList.add("correct"); });
+  }
+  if (isCorrect) addPoints(10);
+  showFeedback(scene.feedback, isCorrect, ch.color);
+}
+
+function showFeedback(feedback, isCorrect, color) {
+  const fa = document.getElementById("feedback-area");
+  const isLast = isLastScene();
+  const isLastChapter = state.chapterIdx === CHAPTERS.length - 1;
+  let nextLabel = "Next →";
+  if (isLast && !isLastChapter) nextLabel = "Next Chapter →";
+  if (isLast && isLastChapter) nextLabel = "See My Results 🏆";
+  fa.innerHTML = `
+    <div class="feedback-box ${isCorrect?'good':'bad'}">
+      <span class="feedback-emoji">${isCorrect?'🎉':'💭'}</span>
+      ${isCorrect ? feedback.correct : feedback.wrong}
+    </div>
+    <button class="next-btn" style="background:${color}" onclick="advanceScene()">${nextLabel}</button>`;
+}
+
+function isLastScene() {
+  return state.sceneIdx >= CHAPTERS[state.chapterIdx].scenes.length - 1;
+}
+
+function advanceScene() {
+  const ch = CHAPTERS[state.chapterIdx];
+  state.sceneIdx++;
+  if (state.sceneIdx >= ch.scenes.length) {
+    state.chapterIdx++;
+    if (state.chapterIdx >= CHAPTERS.length) {
+      state.screen = "result";
+      launchConfetti();
+    } else {
+      state.screen = "chapterIntro";
+    }
+  }
+  render();
+}
+
+function renderResult() {
+  const totalQ = CHAPTERS.reduce((s,c)=>s+c.scenes.filter(sc=>sc.type==='question'||sc.type==='truefalse').length,0);
+  const maxScore = totalQ * 10;
+  const pct = Math.round((state.score / maxScore) * 100);
+  let medal, title, msg;
+  if (pct >= 90) { medal="🏆"; title="Philosophy Pro!"; msg="Outstanding work. You've genuinely tracked the truth across all six readings. Plato would approve."; }
+  else if (pct >= 75) { medal="🥇"; title="Solid Understanding!"; msg="Strong work! You've got the core ideas. A few things to revisit, but you're well-prepared."; }
+  else if (pct >= 55) { medal="🥈"; title="Good Foundation!"; msg="You're getting it! Re-reading the tricky chapters will really cement your understanding."; }
+  else { medal="🥉"; title="Keep Going!"; msg="These are genuinely hard ideas. Review the readings and try again — each pass makes it clearer."; }
+
+  const breakdown = CHAPTERS.map((ch,i) => {
+    const qs = ch.scenes.filter(s=>s.type==='question'||s.type==='truefalse').length;
+    const pts = state.chapterScores[i] || 0;
+    return `<div class="score-row"><span>${ch.emoji} ${ch.author} — <em>${ch.title}</em></span><span class="pts" style="color:${ch.color}">${pts}/${qs*10}</span></div>`;
+  }).join("");
+
+  card.innerHTML = `
+    <div class="center-screen">
+      <span class="medal">${medal}</span>
+      <h2>${title}</h2>
+      <p style="font-size:1.15rem;font-weight:800;color:var(--ink)">${state.score} / ${maxScore} points &nbsp;·&nbsp; ${pct}%</p>
+      <p>${msg}</p>
+      <div class="score-breakdown">${breakdown}</div>
+      <button class="replay-btn" onclick="startGame()">🔄 Play Again</button>
+    </div>`;
+}
+
+function launchConfetti() {
+  const colors=["#f4845f","#6a9fb5","#a8c66c","#e8b84b","#c87dd4","#e05f75","#fff8ee"];
+  const container=document.getElementById("confetti-container");
+  container.innerHTML="";
+  for(let i=0;i<100;i++){
+    const p=document.createElement("div");
+    p.className="confetti-piece";
+    p.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*10}px;height:${6+Math.random()*10}px;border-radius:${Math.random()>0.5?"50%":"2px"};animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*1.5}s;`;
+    container.appendChild(p);
+  }
+  setTimeout(()=>container.innerHTML="",6000);
+}
+
+render();
+</script>
 </body>
-
 </html>
